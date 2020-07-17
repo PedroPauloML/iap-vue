@@ -7,6 +7,7 @@ import Router from "vue-router";
 // This components will be loaded just when used, improving your site performance
 // const Login = () => import("./pages/Login");
 const HomeIndex = () => import("./pages/home/index");
+const NewsLayout = () => import("./pages/news/layout");
 const NewsIndex = () => import("./pages/news/index");
 const NewsShow = () => import("./pages/news/show");
 const VerseOfDayIndex = () => import("./pages/verse_of_day/index");
@@ -34,16 +35,23 @@ const router = new Router({
 
     // NEWS
     {
-      name: "news",
       path: "/news",
-      component: NewsIndex,
+      component: NewsLayout,
       meta: { title: `Notícias | ${site_name}` },
-    },
-    {
-      name: "news_show",
-      path: "/news/:id",
-      component: NewsShow,
-      meta: { title: `Notícias | ${site_name}` },
+      children: [
+        {
+          name: "news",
+          path: "",
+          component: NewsIndex,
+          meta: { title: `Notícias | ${site_name}` },
+        },
+        {
+          name: "news_show",
+          path: "/news/:id",
+          component: NewsShow,
+          meta: { title: `Notícias | ${site_name}` },
+        },
+      ],
     },
 
     // VERSE OF DAY

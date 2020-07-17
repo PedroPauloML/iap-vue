@@ -1,12 +1,7 @@
 <template>
   <div id="news">
-    <v-row>
-      <v-col>
-        <h1>Notícias</h1>
-      </v-col>
-    </v-row>
-
-    <v-row>
+    <p v-if="search" class="title"><b>Pesquisando por:</b> {{ search }}</p>
+    <v-row v-if="!searching">
       <v-col
         v-for="(news, group_index) in grouped_news"
         :key="group_index"
@@ -40,6 +35,10 @@
         />
       </v-col>
     </v-row>
+
+    <v-row v-else align="center" justify="center">
+      <v-progress-linear indeterminate color="primary"></v-progress-linear>
+    </v-row>
   </div>
 </template>
 
@@ -48,6 +47,7 @@ import NewsPoster from "../../components/news/NewsPoster";
 
 export default {
   components: { NewsPoster },
+  props: { search: String, searching: Boolean },
   data() {
     return {
       news: new Array(10).fill({
@@ -60,11 +60,21 @@ export default {
     };
   },
   created() {
-    console.log(this.grouped_news);
+    if (this.$route.query.search) {
+      this.$emit("search", this.$route.query.search);
+    }
   },
   methods: {
     generateRatio(row, col) {
       return row % 2 == 0 ? (col == 0 ? "1" : "2") : col == 2 ? "1" : "2";
+    },
+  },
+  watch: {
+    search() {
+      this.$emit("searching", true);
+      setTimeout(() => {
+        this.$emit("searching", false);
+      }, 1000);
     },
   },
   computed: {
@@ -96,6 +106,10 @@ export default {
 
       return group;
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    next();
+    this.$emit("clearInputSearch");
   },
 };
 </script>

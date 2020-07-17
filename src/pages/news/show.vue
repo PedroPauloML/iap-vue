@@ -5,7 +5,20 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      back_router: "/news",
+    };
+  },
+  created() {
+    this.$emit("setBackRoute", { name: "news" });
+  },
+  beforeRouteLeave(to, from, next) {
+    this.$emit("setBackRoute", null);
+    next();
+  },
+};
 </script>
 
 <style></style>
