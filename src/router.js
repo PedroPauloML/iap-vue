@@ -5,19 +5,18 @@ import Router from "vue-router";
 
 // Lazy load of components
 // This components will be loaded just when used, improving your site performance
-// const Login = () => import(/* webPackChunkName: "login" */ "./pages/Login");
-const Home = () => import(/* webPackChunkName: "mainPages" */ "./pages/Home");
-const News = () => import(/* webPackChunkName: "mainPages" */ "./pages/News");
-const VerseOfDay = () =>
-  import(/* webPackChunkName: "mainPages" */ "./pages/VerseOfDay");
-const Messages = () =>
-  import(/* webPackChunkName: "mainPages" */ "./pages/Messages");
-const Schedule = () =>
-  import(/* webPackChunkName: "mainPages" */ "./pages/Schedule");
-const Contact = () =>
-  import(/* webPackChunkName: "mainPages" */ "./pages/Contact");
+// const Login = () => import("./pages/Login");
+const HomeIndex = () => import("./pages/home/index");
+const NewsIndex = () => import("./pages/news/index");
+const NewsShow = () => import("./pages/news/show");
+const VerseOfDayIndex = () => import("./pages/verse_of_day/index");
+const MessagesIndex = () => import("./pages/messages/index");
+const ScheduleIndex = () => import("./pages/schedule/index");
+const ContactIndex = () => import("./pages/contact/index");
 
 Vue.use(Router);
+
+const site_name = "Portal IAP Paulo Afonso";
 
 const router = new Router({
   mode: "history",
@@ -26,21 +25,71 @@ const router = new Router({
     // { name: "login", path: "/login", component: Login },
 
     // HOME
-    { name: "home", path: "/", component: Home },
-    { name: "news", path: "/news", component: News },
-    { name: "verse_of_day", path: "/verse_of_day", component: VerseOfDay },
-    { name: "messages", path: "/messages", component: Messages },
-    { name: "schedule", path: "/schedule", component: Schedule },
-    { name: "contact", path: "/contact", component: Contact },
+    {
+      name: "home",
+      path: "/",
+      component: HomeIndex,
+      meta: { title: `Início | ${site_name}` },
+    },
+
+    // NEWS
+    {
+      name: "news",
+      path: "/news",
+      component: NewsIndex,
+      meta: { title: `Notícias | ${site_name}` },
+    },
+    {
+      name: "news_show",
+      path: "/news/:id",
+      component: NewsShow,
+      meta: { title: `Notícias | ${site_name}` },
+    },
+
+    // VERSE OF DAY
+    {
+      name: "verse_of_day",
+      path: "/verse_of_day",
+      component: VerseOfDayIndex,
+      meta: { title: `Versículos do Dia | ${site_name}` },
+    },
+
+    // MESSAGES
+    {
+      name: "messages",
+      path: "/messages",
+      component: MessagesIndex,
+      meta: { title: `Mensagens | ${site_name}` },
+    },
+
+    // SCHEDULE
+    {
+      name: "schedule",
+      path: "/schedule",
+      component: ScheduleIndex,
+      meta: { title: `Agenda | ${site_name}` },
+    },
+
+    // CONTACT
+    {
+      name: "contact",
+      path: "/contact",
+      component: ContactIndex,
+      meta: { title: `Contato | ${site_name}` },
+    },
   ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.name == "login" || store.state.user) {
-//     next();
-//   } else {
-//     next({ name: "login" });
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || site_name;
+
+  // if (to.name == "login" || store.state.user) {
+  //   next();
+  // } else {
+  //   next({ name: "login" });
+  // }
+
+  next();
+});
 
 export default router;

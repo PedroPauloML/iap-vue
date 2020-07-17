@@ -47,7 +47,7 @@
         <router-link
           v-for="(route, index) in routes"
           :key="index"
-          :to="route.path_name"
+          :to="{ name: route.path_name }"
           v-slot="{ href, isActive }"
         >
           <v-btn
@@ -122,7 +122,7 @@
           <router-link
             v-for="(route, index) in routes"
             :key="index"
-            :to="route.path_name"
+            :to="{ name: route.path_name }"
             v-slot="{ href }"
           >
             <v-list-item :to="href">
@@ -158,7 +158,7 @@ export default {
       drawer: false,
       routes: [
         {
-          path_name: "/",
+          path_name: "home",
           title: "Início",
         },
         {

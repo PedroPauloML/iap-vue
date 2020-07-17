@@ -1,0 +1,8 @@
+@for $i from 1 through 5 {
+  .text-truncate-#{$i}-line {
+    display: -webkit-box;
+    -webkit-line-clamp: #{$i};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

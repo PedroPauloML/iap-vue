@@ -3,7 +3,7 @@
     <Header />
 
     <v-main class="secondary">
-      <v-container>
+      <v-container id="main-container">
         <transition name="slide-y-transition" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -26,4 +26,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+#main-container {
+  max-width: 1200px !important;
+}
+</style>
