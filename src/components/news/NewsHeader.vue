@@ -54,9 +54,6 @@ export default {
     value(val) {
       this.search = val;
     },
-    back_route(val, oldVal) {
-      console.log(val, oldVal);
-    },
   },
   methods: {
     searchNews() {

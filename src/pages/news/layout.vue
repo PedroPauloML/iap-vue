@@ -30,7 +30,6 @@ export default {
   methods: {
     setBackRoute(route) {
       this.back_route = route;
-      console.log(this.back_route);
     },
     clearInputSearch() {
       this.search = "";

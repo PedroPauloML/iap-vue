@@ -1,6 +1,17 @@
 <template>
   <div id="news">
-    <p v-if="search" class="title"><b>Pesquisando por:</b> {{ search }}</p>
+    <div v-if="search" class="d-flex mb-5">
+      <span v-if="searching" class="mr-1 text-nowrap">
+        Aguarde um momento, estamos pesquisando por
+      </span>
+      <span v-else class="mr-1 text-nowrap">
+        Encontramos 10 resultados para a busca
+      </span>
+      <span class="text-truncate-1-line mr-1 font-weight-medium">
+        {{ search }}
+      </span>
+    </div>
+
     <v-row v-if="!searching">
       <v-col
         v-for="(news, group_index) in grouped_news"
@@ -19,7 +30,7 @@
               ratio: $vuetify.breakpoint.xs ? '1.2' : '2.1',
             }"
             :route="single_new.route"
-            :class="{ 'rounded-lg': true, 'mt-7': i % 2 != 0 }"
+            :class="{ 'mt-7': i % 2 != 0 }"
           />
         </div>
         <NewsPoster
@@ -31,7 +42,6 @@
             ratio: $vuetify.breakpoint.xs ? '1.2' : '1',
           }"
           :route="news.route"
-          class="rounded-lg"
         />
       </v-col>
     </v-row>
@@ -50,7 +60,7 @@ export default {
   props: { search: String, searching: Boolean },
   data() {
     return {
-      news: new Array(10).fill({
+      news_list: new Array(10).fill({
         title: "Título da Notícia",
         caption:
           "Legenda/curta descrição da notícia. Não deve ser muito grande para não quebrar linha.",
@@ -81,11 +91,11 @@ export default {
     grouped_news() {
       let group = [];
 
-      this.news.forEach((_, index) => {
-        if (index % 3 == 0 && index < this.news.length) {
-          let new_array = this.news.slice(
+      this.news_list.forEach((_, index) => {
+        if (index % 3 == 0 && index < this.news_list.length) {
+          let new_array = this.news_list.slice(
             index,
-            Math.min(index + 3, this.news.length)
+            Math.min(index + 3, this.news_list.length)
           );
 
           if (index % 6 == 0) {

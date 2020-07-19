@@ -18,7 +18,7 @@
               ratio: '2.1',
             }"
             :route="single_new.route"
-            :class="{ 'rounded-lg': true, 'mt-7': i % 2 != 0 }"
+            :class="{ 'mt-7': i % 2 != 0 }"
           />
         </div>
         <NewsPoster
@@ -30,7 +30,6 @@
             ratio: '1',
           }"
           :route="news.route"
-          class="rounded-lg"
         />
       </v-col>
     </v-row>
@@ -44,7 +43,7 @@ export default {
   components: { NewsPoster },
   data() {
     return {
-      news: new Array(3).fill({
+      news_list: new Array(3).fill({
         title: "Título da Notícia",
         caption:
           "Legenda/curta descrição da notícia. Não deve ser muito grande para não quebrar linha.",
@@ -65,11 +64,11 @@ export default {
     grouped_news() {
       let group = [];
 
-      this.news.forEach((_, index) => {
-        if (index % 3 == 0 && index < this.news.length) {
-          let new_array = this.news.slice(
+      this.news_list.forEach((_, index) => {
+        if (index % 3 == 0 && index < this.news_list.length) {
+          let new_array = this.news_list.slice(
             index,
-            Math.min(index + 3, this.news.length)
+            Math.min(index + 3, this.news_list.length)
           );
 
           if (index % 6 == 0) {
