@@ -10,7 +10,9 @@ const HomeIndex = () => import("./pages/home/index");
 const NewsLayout = () => import("./pages/news/layout");
 const NewsIndex = () => import("./pages/news/index");
 const NewsShow = () => import("./pages/news/show");
+const VerseOfDayLayout = () => import("./pages/verse_of_day/layout");
 const VerseOfDayIndex = () => import("./pages/verse_of_day/index");
+const VerseOfDayShow = () => import("./pages/verse_of_day/show");
 const MessagesIndex = () => import("./pages/messages/index");
 const ScheduleIndex = () => import("./pages/schedule/index");
 const ContactIndex = () => import("./pages/contact/index");
@@ -56,10 +58,22 @@ const router = new Router({
 
     // VERSE OF DAY
     {
-      name: "verse_of_day",
-      path: "/verse_of_day",
-      component: VerseOfDayIndex,
-      meta: { title: `Versículos do Dia | ${site_name}` },
+      path: "/verses_of_day",
+      component: VerseOfDayLayout,
+      children: [
+        {
+          name: "verses_of_day",
+          path: "",
+          component: VerseOfDayIndex,
+          meta: { title: `Versículos do dia | ${site_name}` },
+        },
+        {
+          name: "verse_of_day",
+          path: "/verses_of_day/:id",
+          component: VerseOfDayShow,
+          meta: { title: `Versículos do dia | ${site_name}` },
+        },
+      ],
     },
 
     // MESSAGES

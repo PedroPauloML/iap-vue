@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <v-row>
+    <v-row class="mb-5">
       <v-col
         v-for="(news, group_index) in grouped_news"
         :key="group_index"
@@ -33,14 +33,22 @@
         />
       </v-col>
     </v-row>
+
+    <VerseOfDay
+      :verse="verse_of_day.verse"
+      :reference="verse_of_day.reference"
+      :date="verse_of_day.date"
+      :route="verse_of_day.route"
+    />
   </div>
 </template>
 
 <script>
 import NewsPoster from "../../components/news/NewsPoster";
+import VerseOfDay from "../../components/verse_of_day/Component";
 
 export default {
-  components: { NewsPoster },
+  components: { NewsPoster, VerseOfDay },
   data() {
     return {
       news_list: new Array(3).fill({
@@ -50,10 +58,15 @@ export default {
         image_url: "https://picsum.photos/510/300?random",
         route: { name: "news_show", params: { id: 1 } },
       }),
+      verse_of_day: {
+        verse: `Elevo os meus olhos para os montes; de onde me vem o socorro? O meu
+        socorro vem do Senhor, que fez os céus e a terra. Não deixará vacilar o
+        teu pé; aquele que te guarda não dormitará.`,
+        reference: `Salmos 121:1-3`,
+        date: "2020-07-05T03:37:00-03:00",
+        route: { name: "verses_of_day" },
+      },
     };
-  },
-  created() {
-    console.log(this.grouped_news);
   },
   methods: {
     generateRatio(row, col) {

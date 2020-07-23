@@ -119,7 +119,9 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     next();
-    this.$emit("clearInputSearch");
+    if (this.search) {
+      this.$emit("clearInputSearch");
+    }
   },
 };
 </script>

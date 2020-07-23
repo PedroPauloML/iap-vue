@@ -34,7 +34,7 @@ export default {
           title: "Notícias",
         },
         {
-          path_name: "verse_of_day",
+          path_name: "verses_of_day",
           title: "Versículos do dia",
         },
         {
