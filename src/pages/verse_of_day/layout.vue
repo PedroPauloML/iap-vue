@@ -29,15 +29,11 @@ export default {
       searching: false,
     };
   },
-  created() {
-    console.log(this.date);
-  },
   methods: {
     setBackRoute(route) {
       this.back_route = route;
     },
     clearInputSearch() {
-      console.log("clearInputSearch");
       this.filters = {
         search: "",
         date: "",

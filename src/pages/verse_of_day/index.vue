@@ -79,11 +79,12 @@ export default {
 
     if (this.$route.query.search) this.value.search = this.$route.query.search;
     if (this.$route.query.date) this.value.date = this.$route.query.date;
+
+    this.filterVersesOfDay(this.value);
   },
   watch: {
     value: {
       handler: function() {
-        this.$emit("searching", true);
         this.filterVersesOfDay(this.value);
       },
       deep: true,
@@ -95,35 +96,39 @@ export default {
   // },
   methods: {
     filterVersesOfDay(filters) {
-      let search = (filters.search || "")
-        .toLocaleLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+      if (!this.searching) {
+        this.$emit("searching", true);
 
-      let date = filters.date
-        ? this.$moment(filters.date).format("DD/MM/YYYY")
-        : "";
+        let search = (filters.search || "")
+          .toLocaleLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
-      this.verses_of_day = this.list_of_verses.filter(
-        (verse_of_day) =>
-          (verse_of_day.verse
-            .toLocaleLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .includes(search) ||
-            verse_of_day.reference
+        let date = filters.date
+          ? this.$moment(filters.date).format("DD/MM/YYYY")
+          : "";
+
+        this.verses_of_day = this.list_of_verses.filter(
+          (verse_of_day) =>
+            (verse_of_day.verse
               .toLocaleLowerCase()
               .normalize("NFD")
               .replace(/[\u0300-\u036f]/g, "")
-              .includes(search)) &&
-          (date
-            ? this.$moment(verse_of_day.date).format("DD/MM/YYYY") == date
-            : true)
-      );
+              .includes(search) ||
+              verse_of_day.reference
+                .toLocaleLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .includes(search)) &&
+            (date
+              ? this.$moment(verse_of_day.date).format("DD/MM/YYYY") == date
+              : true)
+        );
 
-      setTimeout(() => {
-        this.$emit("searching", false);
-      }, 1000);
+        setTimeout(() => {
+          this.$emit("searching", false);
+        }, 1000);
+      }
     },
   },
 };

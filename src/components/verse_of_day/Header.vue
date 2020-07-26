@@ -45,6 +45,12 @@
             locale="pt-br"
             no-title
             scrollable
+            @change="
+              (date) => {
+                filters.date = date;
+                filterVerseOfDay();
+              }
+            "
           >
           </v-date-picker>
         </v-menu>
