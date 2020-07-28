@@ -13,7 +13,9 @@ const NewsShow = () => import("./pages/news/show");
 const VerseOfDayLayout = () => import("./pages/verse_of_day/layout");
 const VerseOfDayIndex = () => import("./pages/verse_of_day/index");
 const VerseOfDayShow = () => import("./pages/verse_of_day/show");
+const MessagesLayout = () => import("./pages/messages/layout");
 const MessagesIndex = () => import("./pages/messages/index");
+const MessagesShow = () => import("./pages/messages/show");
 const ScheduleIndex = () => import("./pages/schedule/index");
 const ContactIndex = () => import("./pages/contact/index");
 
@@ -78,10 +80,22 @@ const router = new Router({
 
     // MESSAGES
     {
-      name: "messages",
       path: "/messages",
-      component: MessagesIndex,
-      meta: { title: `Mensagens | ${site_name}` },
+      component: MessagesLayout,
+      children: [
+        {
+          name: "messages",
+          path: "",
+          component: MessagesIndex,
+          meta: { title: `Mensagens | ${site_name}` },
+        },
+        {
+          name: "message",
+          path: "/messages/:id",
+          component: MessagesShow,
+          meta: { title: `Mensagens | ${site_name}` },
+        },
+      ],
     },
 
     // SCHEDULE
