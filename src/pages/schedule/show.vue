@@ -1,7 +1,6 @@
 <template>
   <div id="schedule">
     <Schedule
-      :route="schedule.route"
       :title="schedule.title"
       :description="schedule.description"
       :date_start="schedule.date_start"
@@ -22,7 +21,6 @@ export default {
     return {
       back_router: "/schedules",
       schedule: {
-        route: { name: "schedule", params: { id: this.$route.params.id - 10 } },
         title: "Retiro de final de ano",
         description: `
         O Retiro de final de ano é um momento de alegria entre os irmãos,

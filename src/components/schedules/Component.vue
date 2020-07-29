@@ -14,7 +14,7 @@
         </p>
       </div>
 
-      <router-link :to="route">
+      <router-link v-if="route" :to="route">
         <v-img :src="image" aspect-ratio="2" class="rounded mb-3">
           <template v-slot:placeholder>
             <v-row
@@ -30,11 +30,26 @@
           </template>
         </v-img>
       </router-link>
+      <v-img v-else :src="image" aspect-ratio="2" class="rounded mb-3">
+        <template v-slot:placeholder>
+          <v-row
+            class="fill-height ma-0 secondary darken-1"
+            align="center"
+            justify="center"
+          >
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            ></v-progress-circular>
+          </v-row>
+        </template>
+      </v-img>
 
       <p class="title primary--text">
-        <router-link :to="route" class="text-decoration-none">
+        <router-link v-if="route" :to="route" class="text-decoration-none">
           {{ title }}
         </router-link>
+        <span v-else>{{ title }}</span>
       </p>
 
       <p class="mb-0">
