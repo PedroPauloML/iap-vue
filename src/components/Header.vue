@@ -174,7 +174,7 @@ export default {
           title: "Mensagens",
         },
         {
-          path_name: "schedule",
+          path_name: "schedules",
           title: "Agenda",
         },
         {

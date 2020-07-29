@@ -16,7 +16,9 @@ const VerseOfDayShow = () => import("./pages/verse_of_day/show");
 const MessagesLayout = () => import("./pages/messages/layout");
 const MessagesIndex = () => import("./pages/messages/index");
 const MessagesShow = () => import("./pages/messages/show");
+const ScheduleLayout = () => import("./pages/schedule/layout");
 const ScheduleIndex = () => import("./pages/schedule/index");
+const ScheduleShow = () => import("./pages/schedule/show");
 const ContactIndex = () => import("./pages/contact/index");
 
 Vue.use(Router);
@@ -100,10 +102,22 @@ const router = new Router({
 
     // SCHEDULE
     {
-      name: "schedule",
-      path: "/schedule",
-      component: ScheduleIndex,
-      meta: { title: `Agenda | ${site_name}` },
+      path: "/schedules",
+      component: ScheduleLayout,
+      children: [
+        {
+          name: "schedules",
+          path: "",
+          component: ScheduleIndex,
+          meta: { title: `Agenda | ${site_name}` },
+        },
+        {
+          name: "schedule",
+          path: "/schedules/:id",
+          component: ScheduleShow,
+          meta: { title: `Agenda | ${site_name}` },
+        },
+      ],
     },
 
     // CONTACT
@@ -114,6 +128,13 @@ const router = new Router({
       meta: { title: `Contato | ${site_name}` },
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
 });
 
 router.beforeEach((to, from, next) => {
