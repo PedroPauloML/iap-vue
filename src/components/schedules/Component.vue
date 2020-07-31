@@ -62,7 +62,9 @@
         {{ date_end | moment("DD/MM/YYYY HH:mm") }}
       </p>
 
-      <p v-if="!mini" class="text-justify">{{ description }}</p>
+      <p v-if="!mini" class="text-justify black--text mb-0">
+        {{ description }}
+      </p>
     </v-card-text>
 
     <div
@@ -75,12 +77,16 @@
         align-stretch,
       "
     >
+      <v-divider class="mb-3"></v-divider>
+
       <div v-if="updating" class="mb-3 body-2">
         <p class="text-center grey--text">
           Estamos atualizando sua decisão...
         </p>
         <v-progress-linear indeterminate></v-progress-linear>
       </div>
+
+      <p class="body-2">Podemos contar com sua presença?</p>
 
       <div
         :class="{
@@ -116,7 +122,18 @@
           <v-icon small class="mr-2">mdi-help</v-icon>
           Não tenho certeza se irei
         </v-btn>
+      </div>
 
+      <p v-if="presence != null" class="body-2">
+        Deseja ficar informado sobre esse evento?
+      </p>
+
+      <div
+        :class="{
+          'd-flex': true,
+          'flex-column': !solo || $vuetify.breakpoint.smAndDown,
+        }"
+      >
         <v-btn
           v-if="presence != null && (notify == null || notify == true)"
           color="primary"
