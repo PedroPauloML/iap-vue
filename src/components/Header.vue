@@ -1,6 +1,6 @@
 <template>
   <div id="header">
-    <v-app-bar color="white" app>
+    <v-app-bar color="white" app hide-on-scroll>
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.width < $vuetify.breakpoint.thresholds.sm"
         @click.stop="drawer = !drawer"

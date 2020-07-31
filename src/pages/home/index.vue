@@ -5,7 +5,7 @@
         v-for="(news, group_index) in grouped_news"
         :key="group_index"
         cols="12"
-        md="6"
+        sm="6"
       >
         <div v-if="Array.isArray(news)">
           <NewsPoster
@@ -34,6 +34,51 @@
       </v-col>
     </v-row>
 
+    <div class="d-flex justify-space-between align-center mb-2">
+      <span class="title">Nossa Agenda</span>
+
+      <router-link :to="{ name: 'schedules' }" v-slot="{ href }">
+        <v-btn :to="href" height="100%" text link color="primary" class="pa-3">
+          Ver mais
+        </v-btn>
+      </router-link>
+    </div>
+    <v-carousel
+      v-model="schedule_page"
+      class="mb-5"
+      height="auto"
+      hide-delimiters
+      hide-delimiter-background
+      :continuous="false"
+    >
+      <v-carousel-item
+        v-for="(schedules, index) in grouped_schedules"
+        :key="index"
+        class="px-12"
+      >
+        <v-row>
+          <v-col
+            v-for="(schedule, i) in schedules"
+            :key="index * 3 + i"
+            md="4"
+            sm="6"
+            cols="12"
+          >
+            <Schedule
+              :route="schedule.route"
+              :title="schedule.title"
+              :description="schedule.description"
+              :date_start="schedule.date_start"
+              :date_end="schedule.date_end"
+              :image="schedule.image"
+              :location="schedule.location"
+              mini
+            />
+          </v-col>
+        </v-row>
+      </v-carousel-item>
+    </v-carousel>
+
     <VerseOfDay
       :verse="verse_of_day.verse"
       :reference="verse_of_day.reference"
@@ -58,9 +103,10 @@
 import NewsPoster from "../../components/news/NewsPoster";
 import VerseOfDay from "../../components/verse_of_day/Component";
 import Message from "../../components/messages/Component";
+import Schedule from "../../components/schedules/Component";
 
 export default {
-  components: { NewsPoster, VerseOfDay, Message },
+  components: { NewsPoster, VerseOfDay, Message, Schedule },
   data() {
     return {
       news_list: new Array(3).fill({
@@ -70,6 +116,8 @@ export default {
         image_url: "https://picsum.photos/510/300?random",
         route: { name: "news_show", params: { id: 1 } },
       }),
+      schedules_list: [],
+      schedule_page: 0,
       verse_of_day: {
         verse: `Elevo os meus olhos para os montes; de onde me vem o socorro? O meu
         socorro vem do Senhor, que fez os céus e a terra. Não deixará vacilar o
@@ -117,6 +165,31 @@ export default {
       },
     };
   },
+  created() {
+    let schedules = [];
+    for (let index = 1; index < 10; index++) {
+      schedules = schedules.concat({
+        route: { name: "schedule", params: { id: index + 10 } },
+        title: "Retiro de final de ano",
+        description: `
+        O Retiro de final de ano é um momento de alegria entre os irmãos,
+        momento de confraternização e, também, de adoração e agradecimento ao senhor.
+        Aproveite esse momento para se alegrar juntamente com sua igreja e
+        agradecer ao senhor por mais um ano debaixo da graça do senhor.
+        Venha e participe conosco!`,
+        date_start: this.$moment()
+          .add(index, "days")
+          .format(),
+        date_end: this.$moment()
+          .add(index, "days")
+          .add(10, "hours")
+          .format(),
+        image: "/images/schedule.png",
+        location: "Chácara Santo Antônio",
+      });
+    }
+    this.schedules_list = schedules;
+  },
   methods: {
     generateRatio(row, col) {
       return row % 2 == 0 ? (col == 0 ? "1" : "2") : col == 2 ? "1" : "2";
@@ -151,8 +224,27 @@ export default {
 
       return group;
     },
+    grouped_schedules() {
+      const group_by = this.$vuetify.breakpoint.mdAndUp
+        ? 3
+        : this.$vuetify.breakpoint.smAndUp
+        ? 2
+        : 1;
+
+      return this.schedules_list.reduce((accumulator, item, index) => {
+        index % group_by
+          ? accumulator[accumulator.length - 1].push(item)
+          : accumulator.push([item]);
+        return accumulator;
+      }, []);
+    },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.v-window__prev,
+.v-window__next {
+  margin: 0;
+}
+</style>

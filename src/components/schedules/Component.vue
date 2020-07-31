@@ -1,5 +1,5 @@
 <template>
-  <v-card class="schedule">
+  <v-card class="schedule" light>
     <v-card-text>
       <div class="d-flex justify-space-between">
         <p class="text-uppercase black--text text-caption font-weight-bold">
@@ -62,11 +62,11 @@
         {{ date_end | moment("DD/MM/YYYY HH:mm") }}
       </p>
 
-      <p class="text-justify">{{ description }}</p>
+      <p v-if="!mini" class="text-justify">{{ description }}</p>
     </v-card-text>
 
     <div
-      v-if="futureEvent"
+      v-if="futureEvent && !mini"
       class="
         px-3
         pt-3
@@ -178,7 +178,8 @@ export default {
       required: true,
     },
     route: Object,
-    solo: Boolean,
+    solo: { type: Boolean, default: false },
+    mini: { type: Boolean, default: false },
   },
   data() {
     return {
