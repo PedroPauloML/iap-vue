@@ -1,5 +1,5 @@
 <template>
-  <v-card class="verse-of-day">
+  <v-card class="verse-of-day" light>
     <v-card-text class="d-flex flex-column flex-sm-row">
       <div
         :class="{

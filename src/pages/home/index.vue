@@ -1,5 +1,14 @@
 <template>
   <div id="home">
+    <div class="d-flex justify-space-between align-center mb-2">
+      <span class="title">Últimas Notícias</span>
+
+      <router-link :to="{ name: 'news' }" v-slot="{ href }">
+        <v-btn :to="href" height="100%" text link color="primary" class="pa-3">
+          Ver mais
+        </v-btn>
+      </router-link>
+    </div>
     <v-row class="mb-5">
       <v-col
         v-for="(news, group_index) in grouped_news"
@@ -54,9 +63,9 @@
       <v-carousel-item
         v-for="(schedules, index) in grouped_schedules"
         :key="index"
-        class="px-12"
+        class="px-8"
       >
-        <v-row>
+        <v-row no-gutters>
           <v-col
             v-for="(schedule, i) in schedules"
             :key="index * 3 + i"
@@ -73,19 +82,45 @@
               :image="schedule.image"
               :location="schedule.location"
               mini
+              class="ma-2"
             />
           </v-col>
         </v-row>
       </v-carousel-item>
     </v-carousel>
 
-    <VerseOfDay
-      :verse="verse_of_day.verse"
-      :reference="verse_of_day.reference"
-      :date="verse_of_day.date"
-      :route="verse_of_day.route"
+    <div class="d-flex justify-space-between align-center mb-2">
+      <span class="title">Versículos do Dia</span>
+
+      <router-link :to="{ name: 'verses_of_day' }" v-slot="{ href }">
+        <v-btn :to="href" height="100%" text link color="primary" class="pa-3">
+          Ver mais
+        </v-btn>
+      </router-link>
+    </div>
+    <v-carousel
+      v-model="verses_of_day_page"
       class="mb-10"
-    />
+      height="auto"
+      hide-delimiters
+      hide-delimiter-background
+      :continuous="false"
+      reverse
+    >
+      <v-carousel-item
+        v-for="(verse_of_day, index) in verses_of_day_list"
+        :key="index"
+        class="px-8"
+      >
+        <VerseOfDay
+          :verse="verse_of_day.verse"
+          :reference="verse_of_day.reference"
+          :date="verse_of_day.date"
+          :route="verse_of_day.route"
+          class="ma-2"
+        />
+      </v-carousel-item>
+    </v-carousel>
 
     <Message
       :route="message.route"
@@ -118,14 +153,8 @@ export default {
       }),
       schedules_list: [],
       schedule_page: 0,
-      verse_of_day: {
-        verse: `Elevo os meus olhos para os montes; de onde me vem o socorro? O meu
-        socorro vem do Senhor, que fez os céus e a terra. Não deixará vacilar o
-        teu pé; aquele que te guarda não dormitará.`,
-        reference: `Salmos 121:1-3`,
-        date: "2020-07-05T03:37:00-03:00",
-        route: { name: "verses_of_day" },
-      },
+      verses_of_day_list: [],
+      verses_of_day_page: 0,
       message: {
         route: { name: "message", params: { id: 1 } },
         title: "Conectadas com a palavra",
@@ -189,6 +218,21 @@ export default {
       });
     }
     this.schedules_list = schedules;
+
+    let verses = [];
+    for (let index = 0; index < 10; index++) {
+      verses = verses.concat({
+        verse: `Elevo os meus olhos para os montes; de onde me vem o socorro? O meu
+        socorro vem do Senhor, que fez os céus e a terra. Não deixará vacilar o
+        teu pé; aquele que te guarda não dormitará.`,
+        reference: `Salmos 121:1-3`,
+        date: this.$moment("2020-07-05T03:37:00-03:00")
+          .subtract(index, "days")
+          .format(),
+        route: { name: "verse_of_day", params: { id: 10 - index } },
+      });
+    }
+    this.verses_of_day_list = verses;
   },
   methods: {
     generateRatio(row, col) {
@@ -246,5 +290,6 @@ export default {
 .v-window__prev,
 .v-window__next {
   margin: 0;
+  transform: scale(0.7);
 }
 </style>
