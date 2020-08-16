@@ -7903,6 +7903,11 @@ vue-cli-plugin-vuetify@~2.0.6:
     semver "^7.1.2"
     shelljs "^0.8.3"
 
+vue-cookies@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/vue-cookies/-/vue-cookies-1.7.3.tgz#de8da757ecb01cd4c5731fcff7f3f86781acc5e8"
+  integrity sha512-94AhF6LDHuZkrkWe1miDFkMALD6r9sKYZ+kT0TV9e6L97HST+Ozj+cKaWf97+fWSadJu50a2w/Cgo0iKQhNtKg==
+
 vue-eslint-parser@^7.0.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.1.0.tgz#9cdbcc823e656b087507a1911732b867ac101e83"
@@ -7981,6 +7986,11 @@ vuetify@^2.2.11:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.4.tgz#fdb03b3281d40a8420b0295ea865843abdc69792"
   integrity sha512-vMtCNqv5BhrjfTfIhH2Lptoxx7z/Nu1NfBiZ2oCvI2QbTagMlhF5GMXgbnnyTGIjooFf/ozKznuMxk6tuI5cxw==
+
+vuex@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.5.1.tgz#f1b8dcea649bc25254cf4f4358081dbf5da18b3d"
+  integrity sha512-w7oJzmHQs0FM9LXodfskhw9wgKBiaB+totOdb8sNzbTB2KDCEEwEs29NzBZFh/lmEK1t5tDmM1vtsO7ubG1DFw==
 
 watchpack-chokidar2@^2.0.0:
   version "2.0.0"

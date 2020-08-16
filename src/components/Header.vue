@@ -64,17 +64,53 @@
 
       <v-spacer />
 
-      <v-btn icon>
-        <v-icon>mdi-bell-outline</v-icon>
-      </v-btn>
+      <div v-if="userSigned">
+        <v-btn icon>
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-btn>
 
-      <v-btn icon>
-        <v-icon>mdi-cog-outline</v-icon>
-      </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-cog-outline</v-icon>
+        </v-btn>
 
-      <v-btn icon>
-        <v-icon>mdi-account-circle-outline</v-icon>
-      </v-btn>
+        <v-menu v-model="profileMenu" offset-y min-width="200" max-width="300">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-account-circle-outline</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list dense>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-img src="https://picsum.photos/id/1012/100/100"></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title class="title">
+                  {{ $store.state.user.user.profile.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ $store.state.user.user.email }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider></v-divider>
+
+            <v-list-item-group color="primary">
+              <v-list-item @click="signOut">
+                <v-list-item-icon>
+                  <v-icon>mdi-logout</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Sair
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </div>
+      <Authentication v-else />
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" fixed left temporary>
@@ -152,7 +188,11 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import Authentication from "./layouts/Authentication";
+
 export default {
+  components: { Authentication },
   data() {
     return {
       drawer: false,
@@ -182,7 +222,27 @@ export default {
           title: "Contato",
         },
       ],
+      profileMenu: false,
     };
+  },
+  created() {
+    this.loadUser();
+  },
+  computed: {
+    userSigned() {
+      return (
+        !!this.$store.state.user.user &&
+        Object.keys(this.$store.state.user.user).length > 0
+      );
+    },
+  },
+  methods: {
+    ...mapActions(["loadUser"]),
+    signOut() {
+      this.$cookies.remove("jwt");
+      this.$store.dispatch("setUser", {});
+      // location.reload();
+    },
   },
 };
 </script>
