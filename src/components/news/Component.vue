@@ -4,11 +4,23 @@
       <div class="fill-height d-flex align-end">
         <v-col class="background pa-4 white--text">
           <div class="d-flex align-center">
-            <v-card-title class="flex title text-truncate-1-line pa-0 mb-2">
+            <v-card-title
+              :class="{
+                flex: true,
+                title: true,
+                'text-truncate-1-line': route ? true : false,
+                'pa-0': true,
+                'mb-2': true,
+              }"
+            >
               {{ title }}
             </v-card-title>
 
-            <router-link v-if="!caption && route" :to="route" v-slot="{ href }">
+            <router-link
+              v-if="!noActions && !caption && route"
+              :to="route"
+              v-slot="{ href }"
+            >
               <v-btn icon x-large link color="white" :to="href">
                 <v-icon size="40">mdi-chevron-right</v-icon>
               </v-btn>
@@ -17,19 +29,29 @@
 
           <div v-if="caption" class="d-flex align-center">
             <v-card-subtitle
-              class="flex white--text subtitle-1 pa-0 text-truncate-2-line"
+              :class="{
+                flex: true,
+                'white--text': true,
+                'subtitle-1': true,
+                'pa-0': true,
+                'text-truncate-2-line': route ? true : false,
+              }"
             >
               {{ caption }}
             </v-card-subtitle>
 
-            <router-link v-if="route" :to="route" v-slot="{ href }">
+            <router-link
+              v-if="!noActions && route"
+              :to="route"
+              v-slot="{ href }"
+            >
               <v-btn icon x-large link color="white" :to="href">
                 <v-icon size="40">mdi-chevron-right</v-icon>
               </v-btn>
             </router-link>
 
             <v-menu
-              v-if="userSigned"
+              v-if="!noActions && userSigned"
               v-model="optionsMenu"
               bottom
               left
@@ -84,7 +106,10 @@
       </template>
     </v-img>
 
-    <v-card-text v-if="metadata" class="d-flex align-center metadata">
+    <v-card-text
+      v-if="metadata"
+      class="d-flex align-center metadata flex-column flex-sm-row"
+    >
       <span v-if="metadata.read_time" class="overline">
         Tempo de leitura:
         {{ Math.ceil(content.split(" ").length / 5 / 60) }} minuto(s)
@@ -107,7 +132,7 @@
 
     <v-card-text v-if="content">
       <div
-        class="content tinymce-content black--text body-1"
+        class="content mce-content-body black--text body-1"
         v-html="content"
       />
     </v-card-text>
@@ -154,6 +179,7 @@ export default {
       author: String,
     },
     tags: Array,
+    noActions: { type: Boolean, default: false },
   },
   data() {
     return {

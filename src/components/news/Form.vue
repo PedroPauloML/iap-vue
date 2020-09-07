@@ -10,7 +10,24 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <News
+        v-show="preview"
+        :id="id"
+        :title="title"
+        :caption="caption"
+        :image="{
+          url: image || currentImage,
+          ratio: 16 / 9,
+        }"
+        :content="content"
+        :metadata="{
+          read_time: true,
+          published_at: this.$moment().format('DD/MM/YYYY'),
+        }"
+        :tags="tags"
+        no-actions
+      />
+      <v-form v-show="!preview" ref="form" v-model="valid" lazy-validation>
         <Cropper ref="image" v-model="image" :currentImage="currentImage" />
         <p v-if="imagePrintError" class="red--text">
           A imagem da notícia é obrigatório(a)
@@ -42,7 +59,7 @@
           @keyup.enter="createNews"
         ></v-text-field>
 
-        <p class="body-1 mt-2">Conteúdo</p>
+        <p class="body-2 mt-2">Conteúdo</p>
         <p ref="contentLabelError" v-show="contentPrintError" class="red--text">
           O conteúdo da notícia é obrigatório(a)
         </p>
@@ -57,7 +74,7 @@
           :search-input.sync="tagsSearch"
           hide-selected
           hint="Máximo de 5 tags"
-          label="Tags"
+          label="Tags (opcional)"
           multiple
           persistent-hint
           small-chips
@@ -79,6 +96,33 @@
     </v-card-text>
 
     <v-card-actions>
+      <v-btn
+        v-if="$vuetify.breakpoint.smAndUp"
+        color="primary"
+        outlined
+        @click="preview = !preview"
+        :disabled="loading"
+      >
+        {{ preview ? "Formulário" : "Pré-visualizar" }}
+      </v-btn>
+      <v-tooltip v-else bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-bind="attrs"
+            v-on="on"
+            color="primary"
+            outlined
+            @click="preview = !preview"
+            :disabled="loading"
+          >
+            <v-icon>
+              {{ preview ? "mdi-file" : "mdi-file-find" }}
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ preview ? "Formulário" : "Pré-visualizar" }}</span>
+      </v-tooltip>
+
       <v-spacer></v-spacer>
       <v-btn color="grey" dark @click="closeForm" :disabled="loading">
         Cancelar
@@ -95,14 +139,18 @@
 </template>
 
 <script>
+import News from "../../components/news/Component";
 import Editor from "../Editor";
 import Cropper from "../Cropper";
 
 export default {
-  components: { Editor, Cropper },
+  components: { Editor, Cropper, News },
   props: { data: Object, default: {} },
   data() {
     return {
+      // General
+      preview: false,
+
       // Fields
       id: this.data ? this.data.id : null,
       title: this.data ? this.data.title : null,
@@ -164,6 +212,10 @@ export default {
           image: this.image,
           content: this.content,
           tags: this.tags,
+          metadata: {
+            read_time: true,
+            published_at: this.$moment().format("DD/MM/YYYY"),
+          },
         };
 
         this.loading = true;
@@ -215,7 +267,7 @@ export default {
           tags: this.tags,
           metadata: {
             read_time: true,
-            published_at: this.$moment.format("DD/MM/YYYY"),
+            published_at: this.$moment().format("DD/MM/YYYY"),
           },
         };
 

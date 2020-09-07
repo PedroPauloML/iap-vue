@@ -8,6 +8,7 @@ import "./plugins/vue_moment";
 import "./plugins/vue-cookies";
 
 import "./assets/global.scss";
+import "./assets/tinymce.scss";
 
 Vue.config.productionTip = false;
 

@@ -285,7 +285,7 @@ input[type="file"] {
 .cropped-img-content img {
   max-height: 40vh;
   border-radius: 5px;
-  width: auto;
+  max-width: 100%;
 }
 .cropped-img-content a {
   width: 100%;

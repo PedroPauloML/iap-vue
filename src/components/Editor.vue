@@ -5,7 +5,7 @@
     @input="changeValue"
     :init="{
       height: 500,
-      menubar: false,
+      content_css: '/tinymce/styles/custom.css',
       plugins: [
         'advlist autolink lists link image charmap print preview anchor',
         'searchreplace visualblocks code fullscreen',
@@ -41,7 +41,7 @@
         },
         {
           name: 'plugins',
-          items: ['emoticons', 'link', 'paste', 'image', 'media'],
+          items: ['emoticons', 'link', 'paste', 'image', 'media', 'fullscreen'],
         },
       ],
       formats: {

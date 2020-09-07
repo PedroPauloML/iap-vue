@@ -243,23 +243,21 @@ export default {
 
         this.signingInByEmail = true;
 
-        setTimeout(() => {
-          let user = users.find(
-            (u) => u.email == this.email && u.password == this.password
-          );
+        let user = users.find(
+          (u) => u.email == this.email && u.password == this.password
+        );
 
-          if (user) {
-            let jwt = user.token;
-            this.closeSignInMenu();
-            this.$cookies.set("jwt", jwt);
-            this.$store.dispatch("user/setUser", user);
-            // location.reload();
-          } else {
-            this.signInError = true;
-          }
+        if (user) {
+          let jwt = user.token;
+          this.closeSignInMenu();
+          this.$cookies.set("jwt", jwt);
+          this.$store.dispatch("user/setUser", user);
+          // location.reload();
+        } else {
+          this.signInError = true;
+        }
 
-          this.signingInByEmail = false;
-        }, 1000);
+        this.signingInByEmail = false;
       }
     },
     signInByOAuth() {
@@ -274,28 +272,26 @@ export default {
       if (this.$refs.signUpForm.validate()) {
         this.signingUpByEmail = true;
 
-        setTimeout(() => {
-          let user = {
-            token: "user-2",
-            email: this.email,
-            password: this.password,
-            profile: {
-              name: this.name,
-            },
-          };
+        let user = {
+          token: "user-2",
+          email: this.email,
+          password: this.password,
+          profile: {
+            name: this.name,
+          },
+        };
 
-          if (user) {
-            let jwt = user.token;
-            this.closeSignUpMenu();
-            this.$cookies.set("jwt", jwt);
-            this.$store.dispatch("user/setUser", user);
-            // location.reload();
-          } else {
-            this.signUpError = true;
-          }
+        if (user) {
+          let jwt = user.token;
+          this.closeSignUpMenu();
+          this.$cookies.set("jwt", jwt);
+          this.$store.dispatch("user/setUser", user);
+          // location.reload();
+        } else {
+          this.signUpError = true;
+        }
 
-          this.signingUpByEmail = false;
-        }, 1000);
+        this.signingUpByEmail = false;
       }
     },
     signUpByOAuth() {

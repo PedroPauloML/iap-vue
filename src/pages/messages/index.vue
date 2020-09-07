@@ -159,9 +159,7 @@ export default {
               : true)
         );
 
-        setTimeout(() => {
-          this.$emit("searching", false);
-        }, 1000);
+        this.$emit("searching", false);
       }
     },
   },
