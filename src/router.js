@@ -9,7 +9,9 @@ import Router from "vue-router";
 const HomeIndex = () => import("./pages/home/index");
 const NewsLayout = () => import("./pages/news/layout");
 const NewsIndex = () => import("./pages/news/index");
+const NewsNew = () => import("./pages/news/new");
 const NewsShow = () => import("./pages/news/show");
+const NewsEdit = () => import("./pages/news/edit");
 const VerseOfDayLayout = () => import("./pages/verse_of_day/layout");
 const VerseOfDayIndex = () => import("./pages/verse_of_day/index");
 const VerseOfDayShow = () => import("./pages/verse_of_day/show");
@@ -52,10 +54,22 @@ const router = new Router({
           meta: { title: `Notícias | ${site_name}` },
         },
         {
+          name: "news_new",
+          path: "/news/new",
+          component: NewsNew,
+          meta: { title: `Nova Notícia | ${site_name}` },
+        },
+        {
           name: "news_show",
           path: "/news/:id",
           component: NewsShow,
           meta: { title: `Notícias | ${site_name}` },
+        },
+        {
+          name: "news_edit",
+          path: "/news/:id/edit",
+          component: NewsEdit,
+          meta: { title: `Editando Notícia | ${site_name}` },
         },
       ],
     },

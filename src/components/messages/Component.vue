@@ -8,9 +8,12 @@
   >
     <v-card-text class="header">
       <router-link v-if="route" :to="route" v-slot="{ href }">
-        <v-btn text link depressed class="my-2 pa-0 text-none" :to="href">
-          <h1 class="primary--text">{{ title }}</h1>
-        </v-btn>
+        <a
+          class="primary--text my-2 pa-0 text-h4 text-decoration-none font-weight-medium"
+          :href="href"
+        >
+          {{ title }}
+        </a>
       </router-link>
       <h1 v-else class="primary--text my-3">{{ title }}</h1>
 

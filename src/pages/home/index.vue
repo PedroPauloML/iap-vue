@@ -17,28 +17,28 @@
         sm="6"
       >
         <div v-if="Array.isArray(news)">
-          <NewsPoster
+          <News
             v-for="(single_new, i) in news"
             :key="i"
+            :id="single_new.id"
             :title="single_new.title"
             :caption="single_new.caption"
             :image="{
-              url: single_new.image_url,
+              url: single_new.image,
               ratio: '2.1',
             }"
-            :route="single_new.route"
             :class="{ 'mt-7': i % 2 != 0 }"
           />
         </div>
-        <NewsPoster
+        <News
           v-else
+          :id="news.id"
           :title="news.title"
           :caption="news.caption"
           :image="{
-            url: news.image_url,
+            url: news.image,
             ratio: '1',
           }"
-          :route="news.route"
         />
       </v-col>
     </v-row>
@@ -135,22 +135,16 @@
 </template>
 
 <script>
-import NewsPoster from "../../components/news/NewsPoster";
+import News from "../../components/news/Component";
 import VerseOfDay from "../../components/verse_of_day/Component";
 import Message from "../../components/messages/Component";
 import Schedule from "../../components/schedules/Component";
 
 export default {
-  components: { NewsPoster, VerseOfDay, Message, Schedule },
+  components: { News, VerseOfDay, Message, Schedule },
   data() {
     return {
-      news_list: new Array(3).fill({
-        title: "Título da Notícia",
-        caption:
-          "Legenda/curta descrição da notícia. Não deve ser muito grande para não quebrar linha.",
-        image_url: "https://picsum.photos/510/300?random",
-        route: { name: "news_show", params: { id: 1 } },
-      }),
+      news_list: [],
       schedules_list: [],
       schedule_page: 0,
       verses_of_day_list: [],
@@ -195,6 +189,10 @@ export default {
     };
   },
   created() {
+    this.$store.dispatch("news/loadNews").then(() => {
+      this.news_list = this.$store.state.news.news.slice(0, 3);
+    });
+
     let schedules = [];
     for (let index = 1; index < 10; index++) {
       schedules = schedules.concat({

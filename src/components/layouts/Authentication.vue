@@ -252,7 +252,7 @@ export default {
             let jwt = user.token;
             this.closeSignInMenu();
             this.$cookies.set("jwt", jwt);
-            this.$store.dispatch("setUser", user);
+            this.$store.dispatch("user/setUser", user);
             // location.reload();
           } else {
             this.signInError = true;
@@ -288,7 +288,7 @@ export default {
             let jwt = user.token;
             this.closeSignUpMenu();
             this.$cookies.set("jwt", jwt);
-            this.$store.dispatch("setUser", user);
+            this.$store.dispatch("user/setUser", user);
             // location.reload();
           } else {
             this.signUpError = true;

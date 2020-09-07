@@ -1,16 +1,11 @@
 <template>
   <div id="news-layout">
-    <NewsHeader
-      :back_route="back_route"
-      v-model="search"
-      :searching="searching"
-    />
+    <Header :back_route="back_route" v-model="filters" :searching="searching" />
     <transition name="slide-y-transition" mode="out-in">
       <router-view
         @clearInputSearch="clearInputSearch"
         @setBackRoute="setBackRoute"
-        :search="search"
-        v-on:search="(value) => (search = value)"
+        v-model="filters"
         :searching="searching"
         v-on:searching="(value) => (searching = value)"
       ></router-view>
@@ -19,22 +14,31 @@
 </template>
 
 <script>
-import NewsHeader from "../../components/news/NewsHeader";
+import Header from "../../components/news/Header";
+
 export default {
+  components: { Header },
   data() {
     return {
       back_route: null,
-      search: "",
+      filters: {
+        search: this.$route.query.search,
+        date: this.$route.query.date
+          ? this.$moment(this.$route.query.date, "YYYY-MM-DD").format()
+          : "",
+      },
       searching: false,
     };
   },
-  components: { NewsHeader },
   methods: {
     setBackRoute(route) {
       this.back_route = route;
     },
     clearInputSearch() {
-      this.search = "";
+      this.filters = {
+        search: "",
+        date: "",
+      };
     },
   },
 };

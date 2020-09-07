@@ -3,11 +3,19 @@
     <v-img :src="image.url" :aspect-ratio="image.ratio">
       <div class="fill-height d-flex align-end">
         <v-col class="background pa-4 white--text">
-          <v-card-title class="title text-truncate-1-line pa-0 mb-2">
-            {{ title }}
-          </v-card-title>
-
           <div class="d-flex align-center">
+            <v-card-title class="flex title text-truncate-1-line pa-0 mb-2">
+              {{ title }}
+            </v-card-title>
+
+            <router-link v-if="!caption && route" :to="route" v-slot="{ href }">
+              <v-btn icon x-large link color="white" :to="href">
+                <v-icon size="40">mdi-chevron-right</v-icon>
+              </v-btn>
+            </router-link>
+          </div>
+
+          <div v-if="caption" class="d-flex align-center">
             <v-card-subtitle
               class="flex white--text subtitle-1 pa-0 text-truncate-2-line"
             >
@@ -19,6 +27,45 @@
                 <v-icon size="40">mdi-chevron-right</v-icon>
               </v-btn>
             </router-link>
+
+            <v-menu
+              v-if="userSigned"
+              v-model="optionsMenu"
+              bottom
+              left
+              offset-y
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon x-large color="white" v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list dense flat>
+                <v-list-item
+                  :to="{
+                    name: 'news_edit',
+                    params: { id: id },
+                  }"
+                >
+                  <v-list-item-icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    Editar
+                  </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item @click="destroy">
+                  <v-list-item-icon>
+                    <v-icon>mdi-delete</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    Excluir
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
         </v-col>
       </div>
@@ -37,7 +84,7 @@
       </template>
     </v-img>
 
-    <v-card-text v-if="metadata" class="metadata">
+    <v-card-text v-if="metadata" class="d-flex align-center metadata">
       <span v-if="metadata.read_time" class="overline">
         Tempo de leitura:
         {{ Math.ceil(content.split(" ").length / 5 / 60) }} minuto(s)
@@ -45,7 +92,10 @@
 
       <span v-if="metadata.published_at" class="overline">
         Publicado em:
-        {{ metadata.published_at | moment("DD/MM/YYYY hh:mm") }}
+        {{
+          $moment(metadata.published_at, "DD/MM/YYYY")
+            | moment("DD/MM/YYYY hh:mm")
+        }}
       </span>
 
       <span v-if="metadata.author" class="overline">
@@ -56,7 +106,10 @@
     <v-divider v-if="metadata" />
 
     <v-card-text v-if="content">
-      <div class="content black--text body-1" v-html="content" />
+      <div
+        class="content tinymce-content black--text body-1"
+        v-html="content"
+      />
     </v-card-text>
 
     <v-divider v-if="content && tags" />
@@ -65,7 +118,7 @@
       <router-link
         v-for="(tag, index) in tags"
         :key="index"
-        :to="tag.route"
+        :to="tagRoute(tag)"
         v-slot="{ href }"
       >
         <v-chip
@@ -77,7 +130,7 @@
           text-color="white"
         >
           <v-icon left>mdi-label</v-icon>
-          {{ tag.text }}
+          {{ tag }}
         </v-chip>
       </router-link>
     </v-card-text>
@@ -87,22 +140,51 @@
 <script>
 export default {
   props: {
+    id: Number,
     title: String,
     caption: String,
     image: {
       url: String,
       ratio: String,
     },
-    route: Object,
     content: String,
     metadata: {
       read_time: Boolean,
       published_at: String,
       author: String,
     },
-    tags: {
-      text: String,
-      route: Object,
+    tags: Array,
+  },
+  data() {
+    return {
+      optionsMenu: false,
+      route:
+        this.$router.currentRoute.name != "news_show" && this.id
+          ? { name: "news_show", params: { id: this.id } }
+          : null,
+    };
+  },
+  computed: {
+    userSigned() {
+      return (
+        !!this.$store.state.user.user &&
+        Object.keys(this.$store.state.user.user).length > 0
+      );
+    },
+  },
+  methods: {
+    tagRoute(tag) {
+      return { name: "news", query: { search: tag } };
+    },
+    edit() {
+      this.$router.push();
+    },
+    destroy() {
+      if (confirm("Tem certeza que deseja remover essa notícia?")) {
+        this.$store
+          .dispatch("news/removeNews", this.id)
+          .then(() => this.$emit("onDestroy"));
+      }
     },
   },
 };

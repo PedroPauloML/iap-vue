@@ -83,7 +83,20 @@
           <v-list dense>
             <v-list-item>
               <v-list-item-avatar>
-                <v-img src="https://picsum.photos/id/1012/100/100"></v-img>
+                <v-img src="https://picsum.photos/id/1012/100/100">
+                  <template v-slot:placeholder>
+                    <v-row
+                      class="fill-height ma-0 secondary darken-1"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="primary"
+                      ></v-progress-circular>
+                    </v-row>
+                  </template>
+                </v-img>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class="title">
@@ -240,7 +253,7 @@ export default {
     ...mapActions(["loadUser"]),
     signOut() {
       this.$cookies.remove("jwt");
-      this.$store.dispatch("setUser", {});
+      this.$store.dispatch("user/setUser", {});
       // location.reload();
     },
   },

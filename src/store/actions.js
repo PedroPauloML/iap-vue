@@ -8,7 +8,7 @@ export default {
     let user = jwt ? users.find((u) => u.token == jwt) : null;
 
     if (user) {
-      commit("setUser", user);
+      commit("user/setUser", user);
     }
   },
 };
