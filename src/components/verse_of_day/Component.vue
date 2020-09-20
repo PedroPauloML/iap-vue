@@ -67,40 +67,220 @@
 
     <v-divider />
 
-    <v-card-text v-if="commentary" class="d-flex">
-      <v-img
-        src="https://picsum.photos/id/1012/100/100"
-        aspect-ratio="1"
-        width="60px"
-        height="60px"
-        max-width="60px"
-        max-height="60px"
-        class="rounded-circle mr-4"
-      ></v-img>
-
-      <div class="flex">
-        <span class="overline">
-          {{ commentary.author }}
+    <v-card-text
+      ref="commentariesContainer"
+      class="d-flex align-center justify-space-between"
+    >
+      <span v-if="fetchingCommentaries">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          class="mr-3"
+          size="18"
+          width="2"
+        ></v-progress-circular>
+        Buscando os comentários desse versículo
+      </span>
+      <span v-else>
+        <v-icon class="mr-3">mdi-comment-outline</v-icon>
+        <span v-if="isCommentariesPresent">
+          {{ commentaries.length }}
+          {{
+            $vuetify.breakpoint.smAndUp
+              ? commentaries.length > 1
+                ? "comentários"
+                : "comentário"
+              : ""
+          }}
         </span>
-        <div class="black--text body-1" v-html="commentary.text" />
-      </div>
+        <span v-else-if="commentaries_count">
+          {{ commentaries_count }}
+          {{ commentaries_count > 1 ? "comentários" : "comentário" }}
+        </span>
+        <span v-else>
+          Nenhum comentário adicionado a esse versículo
+        </span>
+      </span>
+
+      <v-btn
+        v-if="userSigned && !noActions"
+        color="primary"
+        text
+        tile
+        small
+        @click="openCommentaryForm"
+      >
+        Adicionar novo comentário
+      </v-btn>
+    </v-card-text>
+
+    <v-scroll-y-transition v-if="userSigned && !noActions" group>
+      <v-divider v-show="showCommentaryForm" key="divider" />
+      <NewCommetary
+        key="form"
+        v-show="showCommentaryForm"
+        class="ma-4"
+        :commentary="''"
+        @cancelCommentary="closeCommentaryForm"
+        @sendCommentary="createNewCommentary"
+        :sending="sendingCommentary"
+      />
+    </v-scroll-y-transition>
+
+    <v-divider v-if="isCommentariesPresent" />
+
+    <span v-if="fetchingCommentaries" class="d-block pa-5">
+      <v-progress-linear indeterminate color="primary"></v-progress-linear>
+    </span>
+
+    <v-card-text
+      v-if="!noCommentaries && !fetchingCommentaries && isCommentariesPresent"
+      class="commentaries"
+    >
+      <Commentary
+        v-for="(commentary, index) in commentaries"
+        :key="index"
+        :commentary="commentary"
+        @update="updateCommentary"
+        :updating="commentaryIdToUpdate == commentary.id && updatingCommentary"
+        @delete="deleteCommentary"
+        :deleting="commentaryIdToDelete == commentary.id && deletingCommentary"
+      />
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import Commentary from "./commentaries/Component";
+import NewCommetary from "./commentaries/Form";
+
 export default {
   props: {
     verse: String,
     reference: String,
     date: String,
     route: Object,
-    commentary: {
-      text: { type: String, required: true },
-      author: { type: String, required: true },
+    commentaries_count: Number,
+    noActions: { type: Boolean, default: false },
+    noCommentaries: { type: Boolean, default: false },
+  },
+  components: { Commentary, NewCommetary },
+  data() {
+    return {
+      showCommentaryForm: false,
+      sendingCommentary: false,
+      fetchingCommentaries: false,
+      commentaryIdToDelete: null,
+      deletingCommentary: false,
+      commentaryIdToUpdate: null,
+      updatingCommentary: false,
+      commentaries: [
+        {
+          id: 1,
+          text: `
+            <p>Bela reflexão e ensiamento para as nossas vidas.</p>
+            <p>Em momentos de ângustia e necessidade, busque ao Senhor.</p>
+            `,
+          author: {
+            name: "Pedro Paulo",
+            avatar: "https://picsum.photos/id/1012/100/100",
+          },
+        },
+        {
+          id: 2,
+          text: `
+            <p>O salmista nos deixou o ensinamento que o nosso porto seguro e salvador
+            é aquele que criou os céus e a terra.</p>
+            <p>Louvado seja Deus.</p>
+            `,
+          author: {
+            name: "Paulo Pedro",
+            avatar: "https://picsum.photos/id/1013/100/100",
+          },
+        },
+      ],
+    };
+  },
+  created() {
+    setTimeout(() => (this.fetchingCommentaries = false), 2000);
+  },
+  computed: {
+    isCommentariesPresent() {
+      return (
+        this.commentaries &&
+        Array.isArray(this.commentaries) &&
+        this.commentaries.length > 0
+      );
+    },
+    userSigned() {
+      return (
+        !!this.$store.state.user.user &&
+        Object.keys(this.$store.state.user.user).length > 0
+      );
+    },
+  },
+  methods: {
+    openCommentaryForm() {
+      this.showCommentaryForm = true;
+    },
+    closeCommentaryForm() {
+      this.showCommentaryForm = false;
+    },
+    createNewCommentary(commentary) {
+      this.sendingCommentary = true;
+      setTimeout(() => {
+        this.commentaries = [
+          {
+            id: this.commentaries.length + 1,
+            text: commentary,
+            author: {
+              name: this.$store.state.user.user.profile.name,
+              avatar: "https://picsum.photos/id/1012/100/100",
+            },
+          },
+          ...this.commentaries,
+        ];
+        this.sendingCommentary = false;
+        this.closeCommentaryForm();
+
+        window.scrollTo({
+          top: this.$refs.commentariesContainer.offsetTop,
+          behavior: "smooth",
+        });
+      }, 1000);
+    },
+    updateCommentary(data) {
+      this.updatingCommentary = true;
+      this.commentaryIdToUpdate = data.id;
+      setTimeout(() => {
+        this.updatingCommentary = false;
+        this.commentaryIdToUpdate = null;
+        this.commentaries.forEach((el) => {
+          if (el.id == data.id) {
+            el.text = data.text;
+          }
+        });
+      }, 1000);
+    },
+    deleteCommentary(id) {
+      if (confirm("Tem certeza que deseja excluir esse comentário?")) {
+        this.deletingCommentary = true;
+        this.commentaryIdToDelete = id;
+        setTimeout(() => {
+          this.deletingCommentary = false;
+          this.commentaryIdToDelete = null;
+          this.commentaries = this.commentaries.filter((el) => el.id != id);
+        }, 1000);
+      }
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.commentaries > .commentary:not(:last-child) {
+  border-bottom: 1px solid #e4e4e4;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+</style>

@@ -4,7 +4,7 @@
       :verse="verse_of_day.verse"
       :reference="verse_of_day.reference"
       :date="verse_of_day.date"
-      :commentary="verse_of_day.commentary"
+      :commentaries_count="verse_of_day.commentaries_count"
       class="mb-5"
     />
   </div>
@@ -24,14 +24,7 @@ export default {
         teu pé; aquele que te guarda não dormitará.`,
         reference: `Salmos 121:1-3`,
         date: "2020-07-05T03:37:00-03:00",
-        commentary: {
-          text: `
-            <p>Aqui é um belo comentário sobre o versículo acima.</p>
-            <p>A ideia desse comentário é explicar, exemplificar o texto,
-            fazendo referência a outros versículos, ou citações de outros autores.</p>
-            `,
-          author: "Pedro Paulo",
-        },
+        commentaries_count: 2,
       },
     };
   },

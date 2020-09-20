@@ -10,24 +10,16 @@ export default {
         return el;
       });
       state.news = [...news, ...state.news];
-      console.log(state.news);
     },
     updateNews(state, payload) {
-      console.log(payload);
-
       let index = state.news.findIndex((el) => el.id == payload.id);
-      console.log(index);
 
       if (index != -1) {
         state.news[index] = { ...state.news[index], ...payload.data };
-        console.log("News updated");
-      } else {
-        console.log("Error on update news");
       }
     },
     removeNews(state, id) {
       state.news = state.news.filter((el) => el.id != id);
-      console.log("News removed");
     },
   },
   actions: {

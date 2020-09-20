@@ -33,6 +33,8 @@
         :reference="verse_of_day.reference"
         :date="verse_of_day.date"
         :route="verse_of_day.route"
+        no-actions
+        no-commentaries
         class="mb-5"
       />
     </div>
@@ -99,33 +101,35 @@ export default {
       if (!this.searching) {
         this.$emit("searching", true);
 
-        let search = (filters.search || "")
-          .toLocaleLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
+        setTimeout(() => {
+          let search = (filters.search || "")
+            .toLocaleLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
 
-        let date = filters.date
-          ? this.$moment(filters.date).format("DD/MM/YYYY")
-          : "";
+          let date = filters.date
+            ? this.$moment(filters.date).format("DD/MM/YYYY")
+            : "";
 
-        this.verses_of_day = this.list_of_verses.filter(
-          (verse_of_day) =>
-            (verse_of_day.verse
-              .toLocaleLowerCase()
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .includes(search) ||
-              verse_of_day.reference
+          this.verses_of_day = this.list_of_verses.filter(
+            (verse_of_day) =>
+              (verse_of_day.verse
                 .toLocaleLowerCase()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
-                .includes(search)) &&
-            (date
-              ? this.$moment(verse_of_day.date).format("DD/MM/YYYY") == date
-              : true)
-        );
+                .includes(search) ||
+                verse_of_day.reference
+                  .toLocaleLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .includes(search)) &&
+              (date
+                ? this.$moment(verse_of_day.date).format("DD/MM/YYYY") == date
+                : true)
+          );
 
-        this.$emit("searching", false);
+          this.$emit("searching", false);
+        }, 1000);
       }
     },
   },
