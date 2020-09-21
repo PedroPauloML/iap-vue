@@ -71,8 +71,12 @@ export default {
       } else {
         this.showError = true;
 
+        let y =
+          this.$refs.container.getBoundingClientRect().top +
+          window.pageYOffset -
+          60;
         window.scrollTo({
-          top: this.$refs.container.offsetTop,
+          top: y,
           behavior: "smooth",
         });
       }

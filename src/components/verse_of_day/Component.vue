@@ -239,8 +239,12 @@ export default {
         this.sendingCommentary = false;
         this.closeCommentaryForm();
 
+        let y =
+          this.$refs.commentariesContainer.getBoundingClientRect().top +
+          window.pageYOffset -
+          60;
         window.scrollTo({
-          top: this.$refs.commentariesContainer.offsetTop,
+          top: y,
           behavior: "smooth",
         });
       }, 1000);

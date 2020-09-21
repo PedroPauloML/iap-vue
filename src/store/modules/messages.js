@@ -1,60 +1,46 @@
-// import stocks_data from "@/data/stocks";
-
 export default {
+  namespaced: true,
   state: {
-    funds: 10000,
-    stocks: [],
+    messages: [],
   },
   mutations: {
-    buyStocks(state, { stockId, stockPrice, quantity }) {
-      const record = state.stocks.find((element) => element.id == stockId);
-
-      if (record) {
-        record.quantity += quantity;
-      } else {
-        state.stocks.push({
-          id: stockId,
-          price: stockPrice,
-          quantity: quantity,
-        });
-      }
-      state.funds -= stockPrice * quantity;
+    addMessage(state, messages) {
+      messages = [messages].flat().map((el, index) => {
+        el.id = state.messages.length + index + 1;
+        return el;
+      });
+      state.messages = [...messages, ...state.messages];
     },
-    sellStock(state, { stockId, stockPrice, quantity }) {
-      const record = state.stocks.find((element) => element.id == stockId);
+    updateMessage(state, payload) {
+      let index = state.messages.findIndex((el) => el.id == payload.id);
 
-      if (record.quantity > quantity) {
-        record.quantity -= quantity;
-      } else {
-        state.stocks.splice(state.stocks.indexOf(record), 1);
+      if (index != -1) {
+        state.messages[index] = { ...state.messages[index], ...payload.data };
       }
-
-      state.funds += stockPrice * quantity;
     },
-    setPortfolio(state, portfolio) {
-      state.funds = portfolio.funds;
-      state.stocks = portfolio.stockPortfolio ? portfolio.stockPortfolio : [];
+    removeMessages(state, id) {
+      state.messages = state.messages.filter((el) => el.id != id);
     },
   },
   actions: {
-    sellStock({ commit }, order) {
-      commit("sellStock", order);
+    loadMessages({ commit, state }) {
+      if (!state.messages.length > 0) {
+        let messages = require("../../data/messages.json").map((obj) => {
+          obj.content = obj.content.filter((el) => !!el).join("");
+
+          return obj;
+        });
+        commit("addMessage", messages);
+      }
     },
-  },
-  getters: {
-    stockPortfolio(state, getters) {
-      return state.stocks.map((stock) => {
-        const record = getters.stocks.find((element) => element.id == stock.id);
-        return {
-          id: stock.id,
-          quantity: stock.quantity,
-          name: record.name,
-          price: record.price,
-        };
-      });
+    addMessage({ commit }, messages) {
+      commit("addMessage", messages);
     },
-    funds(state) {
-      return state.funds;
+    updateMessage({ commit }, payload) {
+      commit("updateMessage", payload);
+    },
+    removeMessages({ commit }, id) {
+      commit("removeMessages", id);
     },
   },
 };

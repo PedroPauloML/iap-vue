@@ -125,12 +125,15 @@
     </v-carousel>
 
     <Message
-      :route="message.route"
+      v-if="message"
+      :id="message.id"
       :title="message.title"
       :caption="message.caption"
       :content="message.content"
-      :metadata="message.metadata"
-      :tags="message.tags"
+      :author="message.author"
+      :published_at="message.published_at"
+      :tags="Array.from(new Set(message.tags))"
+      :metadata="{ read_time: true }"
       class="mb-10"
     />
   </div>
@@ -151,48 +154,16 @@ export default {
       schedule_page: 0,
       verses_of_day_list: [],
       verses_of_day_page: 0,
-      message: {
-        route: { name: "message", params: { id: 1 } },
-        title: "Conectadas com a palavra",
-        caption:
-          "Como tem sido o seu relacionamento com Deus? A sua conexão está clara, direta e sem interferências? Ele está presente no seu dia a dia?",
-        content: `
-          <p>“Um dia o sumo sacerdote Hilquias foi ver Safã, o secretário do rei, e disse: ‘Encontrei um livro no templo do Senhor, e esse livro é o livro da lei!’…” II Reis 22:8 NBV-P</p>
-          <img src="https://portaliap.org/wp-content/uploads/2020/07/bible-800x570.png" />
-          <p>No livro de II Reis capítulos 22 e 23 encontramos a história do reinado de Josias. Ele estava reinando há dezoito anos quando resolveu consertar os estragos do templo. Safã, seu secretário, foi até o sacerdote Hilquias e repassou suas orientações. Ao executar tal ordem, o sacerdote encontrou o livro da lei do Senhor.</p>
-          <p>Como assim? O livro da lei do Senhor estava perdido? Pode parecer estranho, mas é o que está registrado nas sagradas escrituras. E, da mesma forma que aconteceu nessa história durante o reinado de Josias, é possível que muitos de nós tenhamos perdido a palavra de Deus.</p>
-          <p>Os zeladores de igreja que o digam. Quantas Bíblias são esquecidas nos bancos das igrejas e muitas vezes seus donos nem sentem falta…</p>
-          <p>Nesse momento muitos podem até dizer, eu não perdi minha Bíblia. Ok, pode ser que você a tenha na sua casa guardada em algum lugar, em alguma gaveta, bolsa, no smartphone, no computador ou até mesmo ela esteja em cima de um móvel aberta no Salmo 91. Mas, será que a palavra do Senhor não está “perdida”?</p>
-          <p>Se nós temos a Bíblia mas não a lemos, paramos de praticá-la ou ainda não permitimos que ela produza efeito em nossas vidas, então está perdida.</p>
-          <p>Não adianta termos a palavra de Deus à nossa disposição em todas as versões possíveis se a deixamos pelos cantos e não meditamos em seus ensinamentos.</p>
-          <p>O Senhor nos convida a nos conectarmos com a sua palavra, de tal modo que ela produza em nossas vidas o efeito que produziu na vida de Josias.</p>
-          <p>Quando o rei ouviu as palavras do livro, rasgou as suas vestes, abriu seu coração, se humilhou diante do Senhor e tomou a atitude de renovar a sua aliança e do povo com o seu Senhor.</p>
-          <p>Não deixemos a palavra de Deus esquecida. Precisamos todos os dias desse encontro com a palavra do Senhor. A leitura e a prática dos ensinamentos que esse livro maravilhoso contém irá produzir em nós mudança de comportamento, restauração e renovo.</p>`,
-        metadata: {
-          read_time: true,
-          published_at: "2020-07-05T03:37:00-03:00",
-          author: "Pedro Paulo",
-        },
-        tags: [
-          {
-            text: "Mulheres",
-            route: { name: "news", query: { search: "Mulheres" } },
-          },
-          {
-            text: "Mulheres",
-            route: { name: "news", query: { search: "Mulheres" } },
-          },
-          {
-            text: "Mulheres",
-            route: { name: "news", query: { search: "Mulheres" } },
-          },
-        ],
-      },
+      message: null,
     };
   },
   created() {
     this.$store.dispatch("news/loadNews").then(() => {
       this.news_list = this.$store.state.news.news.slice(0, 3);
+    });
+
+    this.$store.dispatch("messages/loadMessages").then(() => {
+      this.message = this.$store.state.messages.messages[0];
     });
 
     let schedules = [];

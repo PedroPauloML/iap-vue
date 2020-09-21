@@ -72,13 +72,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("news/loadNews").then(() => {
-      this.news_list = this.$store.state.news.news;
-      if (this.$route.query.search)
-        this.value.search = this.$route.query.search;
-      if (this.$route.query.date) this.value.date = this.$route.query.date;
-      this.filterNews(this.value);
-    });
+    this.$store.dispatch("news/loadNews").then(this.loadNews);
   },
   methods: {
     loadNews() {
@@ -95,38 +89,40 @@ export default {
       if (!this.searching) {
         this.$emit("searching", true);
 
-        let search = (filters.search || "")
-          .toLocaleLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
+        setTimeout(() => {
+          let search = (filters.search || "")
+            .toLocaleLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
 
-        let date = filters.date
-          ? this.$moment(filters.date).format("DD/MM/YYYY")
-          : "";
+          let date = filters.date
+            ? this.$moment(filters.date).format("DD/MM/YYYY")
+            : "";
 
-        this.news_list = this.$store.state.news.news.filter((news) => {
-          return (
-            (news.title
-              .toLocaleLowerCase()
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .includes(search) ||
-              news.tags.find((tag) =>
-                tag
-                  .toLocaleLowerCase()
-                  .normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .includes(search)
-              )) &&
-            (date
-              ? this.$moment(news.metadata.published_at, "DD/MM/YYYY").format(
-                  "DD/MM/YYYY"
-                ) == date.trim()
-              : true)
-          );
-        });
+          this.news_list = this.$store.state.news.news.filter((news) => {
+            return (
+              (news.title
+                .toLocaleLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .includes(search) ||
+                news.tags.find((tag) =>
+                  tag
+                    .toLocaleLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .includes(search)
+                )) &&
+              (date
+                ? this.$moment(news.metadata.published_at, "DD/MM/YYYY").format(
+                    "DD/MM/YYYY"
+                  ) == date.trim()
+                : true)
+            );
+          });
 
-        this.$emit("searching", false);
+          this.$emit("searching", false);
+        }, 1000);
       }
     },
   },

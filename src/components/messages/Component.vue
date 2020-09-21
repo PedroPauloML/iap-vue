@@ -7,13 +7,16 @@
     }"
   >
     <v-card-text class="header">
-      <router-link v-if="route" :to="route" v-slot="{ href }">
-        <a
-          class="primary--text my-2 pa-0 text-h4 text-decoration-none font-weight-medium"
-          :href="href"
-        >
-          {{ title }}
-        </a>
+      <router-link
+        v-if="id && $router.currentRoute.name != 'messages_show'"
+        :to="{ name: 'messages_show', params: { id: id } }"
+        v-slot="{ href }"
+      >
+        <h1 class="primary--text my-3">
+          <a class="text-decoration-none" :href="href">
+            {{ title }}
+          </a>
+        </h1>
       </router-link>
       <h1 v-else class="primary--text my-3">{{ title }}</h1>
 
@@ -24,32 +27,65 @@
             {{ Math.ceil(content.split(" ").length / 5 / 60) }} minuto(s)
           </span>
 
-          <span v-if="metadata.published_at" class="overline">
+          <span v-if="published_at" class="overline">
             Publicado em:
-            {{ metadata.published_at | moment("DD/MM/YYYY hh:mm") }}
+            {{ published_at | moment("DD/MM/YYYY hh:mm") }}
           </span>
 
-          <span v-if="metadata.author" class="overline">
-            Autor: {{ metadata.author }}
-          </span>
+          <span v-if="author" class="overline"> Autor: {{ author }} </span>
         </div>
 
-        <v-tooltip left>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              icon
-              color="accent"
-              @click="saved = !saved"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>{{
-                saved ? "mdi-bookmark" : "mdi-bookmark-outline"
-              }}</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ saved ? "Remover marcação" : "Marcar publicação" }}</span>
-        </v-tooltip>
+        <div v-if="!noActions" class="actions">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                color="accent"
+                @click="saved = !saved"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>{{
+                  saved ? "mdi-bookmark" : "mdi-bookmark-outline"
+                }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ saved ? "Remover marcação" : "Marcar publicação" }}</span>
+          </v-tooltip>
+
+          <v-menu v-if="userSigned" v-model="optionsMenu" bottom left offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list dense flat>
+              <v-list-item
+                :to="{
+                  name: 'messages_edit',
+                  params: { id: id },
+                }"
+              >
+                <v-list-item-icon>
+                  <v-icon>mdi-pencil</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Editar
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item @click="destroy">
+                <v-list-item-icon>
+                  <v-icon>mdi-delete</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Excluir
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
       </div>
     </v-card-text>
 
@@ -93,41 +129,50 @@
         @click="filterMessages(tag)"
       >
         <v-icon left>mdi-label</v-icon>
-        {{ tag.text }}
+        {{ tag }}
       </v-chip>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import userMixins from "../../mixins/user";
+
 export default {
   props: {
+    id: Number,
     title: { type: String, required: true },
-    route: Object,
     content: { type: String, required: true },
     full_content: Boolean,
+    published_at: String,
+    author: String,
     metadata: {
       read_time: Boolean,
-      published_at: String,
-      author: String,
     },
-    tags: {
-      text: String,
-      route: Object,
-    },
+    tags: Array,
+    noActions: Boolean,
   },
+  mixins: [userMixins],
   data() {
     return {
       saved: false,
       showReadMore: !this.full_content,
+      optionsMenu: false,
     };
   },
   methods: {
     filterMessages(tag) {
       if (this.$router.currentRoute.name == "messages") {
-        this.$emit("filterMessages", tag.text);
+        this.$emit("filterMessages", tag);
       } else {
-        this.$router.push(tag.route);
+        this.$router.push({ name: "messages", query: { search: tag } });
+      }
+    },
+    destroy() {
+      if (confirm("Tem certeza que deseja remover essa mensagem?")) {
+        this.$store
+          .dispatch("messages/removeMessages", this.id)
+          .then(() => this.$emit("onDestroy"));
       }
     },
   },
@@ -181,7 +226,8 @@ export default {
 
   &:not(.full-content) {
     .content {
-      height: 50vh;
+      min-height: 100px;
+      max-height: 50vh;
       overflow: hidden;
     }
 

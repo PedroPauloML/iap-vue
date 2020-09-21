@@ -82,9 +82,9 @@
               @click="
                 $router.push({
                   name:
-                    $router.currentRoute.name == 'news_new'
-                      ? 'news'
-                      : 'news_new',
+                    $router.currentRoute.name == 'messages_new'
+                      ? 'messages'
+                      : 'messages_new',
                 })
               "
               class="ml-5"
@@ -92,16 +92,18 @@
               v-on="on"
             >
               <v-icon
-                :class="{ rotateZ: $router.currentRoute.name == 'news_new' }"
+                :class="{
+                  rotateZ: $router.currentRoute.name == 'messages_new',
+                }"
               >
                 mdi-plus
               </v-icon>
             </v-btn>
           </template>
-          <span v-if="$router.currentRoute.name == 'news_new'"
-            >Cancelar notícia</span
-          >
-          <span v-else>Criar notícia</span>
+          <span v-if="$router.currentRoute.name == 'messages_new'">
+            Cancelar mensagem
+          </span>
+          <span v-else>Criar mensagem</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -167,4 +169,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.rotateZ {
+  transition: all 1s;
+  transform: rotateZ(45deg);
+}
+</style>
