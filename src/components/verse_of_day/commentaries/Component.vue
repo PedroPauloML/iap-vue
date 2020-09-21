@@ -57,8 +57,8 @@
         </v-scroll-x-transition>
       </div>
 
-      <v-scroll-x-transition v-if="userSigned" mode="out-in">
-        <div key="commentary-form" v-if="showEditForm">
+      <v-scroll-x-transition mode="out-in">
+        <div key="commentary-form" v-if="userSigned && showEditForm">
           <Editor ref="content" v-model="commentaryEdited" />
 
           <div class="text-right mt-4">
@@ -94,6 +94,7 @@
 
 <script>
 import Editor from "../../Editor";
+import userMixins from "../../../mixins/user";
 
 export default {
   props: {
@@ -109,6 +110,7 @@ export default {
     updating: Boolean,
   },
   components: { Editor },
+  mixins: [userMixins],
   data() {
     return {
       showEditForm: false,
@@ -122,14 +124,6 @@ export default {
         this.commentaryEdited = val.text;
       },
       deep: true,
-    },
-  },
-  computed: {
-    userSigned() {
-      return (
-        !!this.$store.state.user.user &&
-        Object.keys(this.$store.state.user.user).length > 0
-      );
     },
   },
   methods: {

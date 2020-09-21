@@ -114,6 +114,8 @@
 </template>
 
 <script>
+import userMixins from "../../mixins/user";
+
 export default {
   props: {
     back_route: Object,
@@ -124,6 +126,7 @@ export default {
     searching: Boolean,
     showForm: Boolean,
   },
+  mixins: [userMixins],
   data() {
     return {
       menu: false,
@@ -149,12 +152,6 @@ export default {
       set(newValue) {
         return newValue;
       },
-    },
-    userSigned() {
-      return (
-        !!this.$store.state.user.user &&
-        Object.keys(this.$store.state.user.user).length > 0
-      );
     },
   },
   methods: {

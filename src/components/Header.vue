@@ -203,9 +203,11 @@
 <script>
 import { mapActions } from "vuex";
 import Authentication from "./layouts/Authentication";
+import userMixins from "../mixins/user";
 
 export default {
   components: { Authentication },
+  mixins: [userMixins],
   data() {
     return {
       drawer: false,
@@ -240,14 +242,6 @@ export default {
   },
   created() {
     this.loadUser();
-  },
-  computed: {
-    userSigned() {
-      return (
-        !!this.$store.state.user.user &&
-        Object.keys(this.$store.state.user.user).length > 0
-      );
-    },
   },
   methods: {
     ...mapActions(["loadUser"]),

@@ -153,6 +153,7 @@
 <script>
 import Commentary from "./commentaries/Component";
 import NewCommetary from "./commentaries/Form";
+import userMixins from "../../mixins/user";
 
 export default {
   props: {
@@ -164,6 +165,7 @@ export default {
     noActions: { type: Boolean, default: false },
     noCommentaries: { type: Boolean, default: false },
   },
+  mixins: [userMixins],
   components: { Commentary, NewCommetary },
   data() {
     return {
@@ -210,12 +212,6 @@ export default {
         this.commentaries &&
         Array.isArray(this.commentaries) &&
         this.commentaries.length > 0
-      );
-    },
-    userSigned() {
-      return (
-        !!this.$store.state.user.user &&
-        Object.keys(this.$store.state.user.user).length > 0
       );
     },
   },

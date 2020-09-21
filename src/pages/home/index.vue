@@ -117,6 +117,8 @@
           :reference="verse_of_day.reference"
           :date="verse_of_day.date"
           :route="verse_of_day.route"
+          no-actions
+          no-commentaries
           class="ma-2"
         />
       </v-carousel-item>

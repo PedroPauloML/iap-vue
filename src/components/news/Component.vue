@@ -163,6 +163,8 @@
 </template>
 
 <script>
+import userMixins from "../../mixins/user";
+
 export default {
   props: {
     id: Number,
@@ -181,6 +183,7 @@ export default {
     tags: Array,
     noActions: { type: Boolean, default: false },
   },
+  mixins: [userMixins],
   data() {
     return {
       optionsMenu: false,
@@ -189,14 +192,6 @@ export default {
           ? { name: "news_show", params: { id: this.id } }
           : null,
     };
-  },
-  computed: {
-    userSigned() {
-      return (
-        !!this.$store.state.user.user &&
-        Object.keys(this.$store.state.user.user).length > 0
-      );
-    },
   },
   methods: {
     tagRoute(tag) {
