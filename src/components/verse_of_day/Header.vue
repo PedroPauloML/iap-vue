@@ -15,61 +15,66 @@
         <h1>Versículos do dia</h1>
       </v-col>
 
-      <v-col cols="12" md="5" sm="5" class="d-flex align-center">
-        <v-menu
-          v-model="menu"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="dateFormatted"
-              placeholder="Pesquisar por data..."
-              append-icon="mdi-calendar"
-              background-color="white"
-              class="mr-3"
-              readonly
-              outlined
-              clearable
-              dense
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              @click:clear="value.date = null"
-              :disabled="searching"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="value.date"
-            locale="pt-br"
-            no-title
-            scrollable
-            @change="
-              (date) => {
-                filters.date = date;
-                filterVerseOfDay();
-              }
-            "
+      <v-col cols="12" md="5" sm="7" class="d-flex align-center">
+        <div class="d-flex flex flex-column flex-sm-row">
+          <v-menu
+            v-model="menu"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
           >
-          </v-date-picker>
-        </v-menu>
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="dateFormatted"
+                placeholder="Pesquisar por data..."
+                append-icon="mdi-calendar"
+                background-color="white"
+                :class="{
+                  'mr-3': $vuetify.breakpoint.mdAndUp,
+                  'mb-3': $vuetify.breakpoint.smAndDown,
+                }"
+                readonly
+                outlined
+                clearable
+                dense
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                @click:clear="value.date = null"
+                :disabled="searching"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="value.date"
+              locale="pt-br"
+              no-title
+              scrollable
+              @change="
+                (date) => {
+                  filters.date = date;
+                  filterVerseOfDay();
+                }
+              "
+            >
+            </v-date-picker>
+          </v-menu>
 
-        <v-text-field
-          name="search"
-          v-model="filters.search"
-          placeholder="Pesquisar por..."
-          append-icon="mdi-magnify"
-          background-color="white"
-          max-width="100"
-          outlined
-          clearable
-          dense
-          :hide-details="true"
-          @keyup.enter="filterVerseOfDay"
-          @click:append="filterVerseOfDay"
-          :disabled="searching"
-        ></v-text-field>
+          <v-text-field
+            name="search"
+            v-model="filters.search"
+            placeholder="Pesquisar por..."
+            append-icon="mdi-magnify"
+            background-color="white"
+            max-width="100"
+            outlined
+            clearable
+            dense
+            :hide-details="true"
+            @keyup.enter="filterVerseOfDay"
+            @click:append="filterVerseOfDay"
+            :disabled="searching"
+          ></v-text-field>
+        </div>
       </v-col>
     </v-row>
   </div>

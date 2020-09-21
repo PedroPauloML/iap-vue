@@ -29,7 +29,10 @@
                 placeholder="Pesquisar por data..."
                 append-icon="mdi-calendar"
                 background-color="white"
-                class="mr-3"
+                :class="{
+                  'mr-3': $vuetify.breakpoint.mdAndUp,
+                  'mb-3': $vuetify.breakpoint.smAndDown,
+                }"
                 readonly
                 outlined
                 clearable
