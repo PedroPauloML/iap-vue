@@ -2,15 +2,25 @@
   <v-card class="schedule" light>
     <v-card-text>
       <div class="d-flex justify-space-between">
-        <p class="text-uppercase black--text text-caption font-weight-bold">
+        <p
+          v-if="date_start"
+          class="text-uppercase black--text text-caption font-weight-bold"
+        >
           {{ date_start | moment("DD [de] MMMM [de] YYYY") }}
         </p>
+        <p v-else>Data de início não informada</p>
 
         <p
           v-if="!futureEvent"
           class="red--text text-uppercase caption font-weight-bold"
         >
           Evento já encerrado
+        </p>
+        <p
+          v-else-if="presentEvent"
+          class="green--text text-uppercase caption font-weight-bold"
+        >
+          Evento em andamento
         </p>
       </div>
 
@@ -45,26 +55,70 @@
         </template>
       </v-img>
 
-      <p class="title primary--text">
-        <router-link v-if="route" :to="route" class="text-decoration-none">
-          {{ title }}
-        </router-link>
-        <span v-else>{{ title }}</span>
-      </p>
+      <div class="d-flex justify-space-between">
+        <p class="title primary--text">
+          <router-link v-if="route" :to="route" class="text-decoration-none">
+            {{ title }}
+          </router-link>
+          <span v-else>{{ title }}</span>
+        </p>
+
+        <v-menu
+          v-if="userSigned && !noActions"
+          v-model="optionsMenu"
+          bottom
+          left
+          offset-y
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list dense flat>
+            <v-list-item :to="routeToEdit">
+              <v-list-item-icon>
+                <v-icon>mdi-pencil</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                Editar
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item @click="destroy">
+              <v-list-item-icon>
+                <v-icon>mdi-delete</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                Excluir
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
 
       <p class="mb-0">
-        <v-icon small>mdi-map-marker-outline</v-icon>
-        {{ location }}
+        <v-icon small class="mr-1">mdi-map-marker-outline</v-icon>
+        <span v-if="location">{{ location }}</span>
+        <span v-else>Local não informado</span>
       </p>
       <p>
-        <v-icon small>mdi-clock-outline</v-icon>
-        {{ date_start | moment("DD/MM/YYYY HH:mm") }} -
-        {{ date_end | moment("DD/MM/YYYY HH:mm") }}
+        <v-icon small class="mr-1">mdi-clock-outline</v-icon>
+        <span v-if="date_start">{{
+          date_start | moment("DD/MM/YYYY HH:mm")
+        }}</span>
+        <span v-else>Data de início não informada</span>
+        -
+        <span v-if="date_end">{{ date_end | moment("DD/MM/YYYY HH:mm") }}</span>
+        <span v-else>Data de término não informada</span>
       </p>
 
-      <p v-if="!mini" class="text-justify black--text mb-0">
-        {{ description }}
-      </p>
+      <div
+        v-if="!mini"
+        class="black--text mb-0 description mce-content-body"
+        v-html="description"
+      ></div>
     </v-card-text>
 
     <div
@@ -168,8 +222,11 @@
 </template>
 
 <script>
+import userMixins from "../../mixins/user";
+
 export default {
   props: {
+    id: Number,
     title: {
       type: String,
       required: true,
@@ -194,20 +251,44 @@ export default {
       type: String,
       required: true,
     },
-    route: Object,
     solo: { type: Boolean, default: false },
     mini: { type: Boolean, default: false },
+    noActions: { type: Boolean, default: false },
   },
+  mixins: [userMixins],
   data() {
     return {
       presence: null,
       notify: null,
       updating: false,
+      optionsMenu: false,
     };
   },
   computed: {
+    route() {
+      return this.noActions
+        ? null
+        : this.id
+        ? { name: "schedules_show", params: { id: this.id } }
+        : null;
+    },
+    routeToEdit() {
+      return this.noActions
+        ? null
+        : this.id
+        ? { name: "schedules_edit", params: { id: this.id } }
+        : null;
+    },
     futureEvent() {
-      return this.$moment(this.date_start) > this.$moment();
+      return this.date_end
+        ? this.$moment(this.date_end) > this.$moment()
+        : false;
+    },
+    presentEvent() {
+      return this.date_start && this.date_end
+        ? this.$moment(this.date_start) < this.$moment() &&
+            this.$moment(this.date_end) > this.$moment()
+        : false;
     },
   },
   methods: {
@@ -240,8 +321,19 @@ export default {
         this.updating = false;
       }, 1000);
     },
+    destroy() {
+      if (this.id && confirm("Tem certeza que deseja remover essa agenda?")) {
+        this.$store
+          .dispatch("schedules/removeSchedule", this.id)
+          .then(() => this.$emit("onDestroy"));
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.description :last-child {
+  margin-bottom: 0;
+}
+</style>

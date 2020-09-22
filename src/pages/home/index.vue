@@ -74,7 +74,7 @@
             cols="12"
           >
             <Schedule
-              :route="schedule.route"
+              :id="schedule.id"
               :title="schedule.title"
               :description="schedule.description"
               :date_start="schedule.date_start"
@@ -166,29 +166,15 @@ export default {
       this.message = this.$store.state.messages.messages[0];
     });
 
-    let schedules = [];
-    for (let index = 1; index < 10; index++) {
-      schedules = schedules.concat({
-        route: { name: "schedule", params: { id: index + 10 } },
-        title: "Retiro de final de ano",
-        description: `
-        O Retiro de final de ano é um momento de alegria entre os irmãos,
-        momento de confraternização e, também, de adoração e agradecimento ao senhor.
-        Aproveite esse momento para se alegrar juntamente com sua igreja e
-        agradecer ao senhor por mais um ano debaixo da graça do senhor.
-        Venha e participe conosco!`,
-        date_start: this.$moment()
-          .add(index, "days")
-          .format(),
-        date_end: this.$moment()
-          .add(index, "days")
-          .add(10, "hours")
-          .format(),
-        image: "/images/schedule.png",
-        location: "Chácara Santo Antônio",
-      });
-    }
-    this.schedules_list = schedules;
+    this.$store.dispatch("schedules/loadSchedules").then(() => {
+      this.schedules_list = this.$store.state.schedules.schedules.filter(
+        (el) => {
+          return el.date_end
+            ? this.$moment(el.date_end) > this.$moment()
+            : false;
+        }
+      );
+    });
 
     let verses = [];
     for (let index = 0; index < 10; index++) {

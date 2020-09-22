@@ -20,9 +20,11 @@ const MessagesIndex = () => import("./pages/messages/index");
 const MessagesNew = () => import("./pages/messages/new");
 const MessagesShow = () => import("./pages/messages/show");
 const MessagesEdit = () => import("./pages/messages/edit");
-const ScheduleLayout = () => import("./pages/schedule/layout");
-const ScheduleIndex = () => import("./pages/schedule/index");
-const ScheduleShow = () => import("./pages/schedule/show");
+const SchedulesLayout = () => import("./pages/schedules/layout");
+const SchedulesIndex = () => import("./pages/schedules/index");
+const SchedulesNew = () => import("./pages/schedules/new");
+const SchedulesShow = () => import("./pages/schedules/show");
+const SchedulesEdit = () => import("./pages/schedules/edit");
 const ContactIndex = () => import("./pages/contact/index");
 
 Vue.use(Router);
@@ -128,22 +130,34 @@ const router = new Router({
       ],
     },
 
-    // SCHEDULE
+    // SCHEDULES
     {
       path: "/schedules",
-      component: ScheduleLayout,
+      component: SchedulesLayout,
       children: [
         {
           name: "schedules",
           path: "",
-          component: ScheduleIndex,
-          meta: { title: `Agenda | ${site_name}` },
+          component: SchedulesIndex,
+          meta: { title: `Agendas | ${site_name}` },
         },
         {
-          name: "schedule",
+          name: "schedules_new",
+          path: "/schedules/new",
+          component: SchedulesNew,
+          meta: { title: `Nova Agenda | ${site_name}` },
+        },
+        {
+          name: "schedules_show",
           path: "/schedules/:id",
-          component: ScheduleShow,
-          meta: { title: `Agenda | ${site_name}` },
+          component: SchedulesShow,
+          meta: { title: `Agendas | ${site_name}` },
+        },
+        {
+          name: "schedules_edit",
+          path: "/schedules/:id/edit",
+          component: SchedulesEdit,
+          meta: { title: `Editando Agenda | ${site_name}` },
         },
       ],
     },

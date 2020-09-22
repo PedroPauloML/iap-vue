@@ -4,12 +4,11 @@ export default {
     messages: [],
   },
   mutations: {
-    addMessage(state, messages) {
-      messages = [messages].flat().map((el, index) => {
-        el.id = state.messages.length + index + 1;
-        return el;
-      });
-      state.messages = [...messages, ...state.messages];
+    addMessage(state, message) {
+      if (!message.id) {
+        message.id = state.messages.length + 1;
+      }
+      state.messages = [message, ...state.messages];
     },
     updateMessage(state, payload) {
       let index = state.messages.findIndex((el) => el.id == payload.id);
@@ -30,11 +29,15 @@ export default {
 
           return obj;
         });
-        commit("addMessage", messages);
+        messages
+          .sort((a, b) => a.id - b.id)
+          .forEach((message) => {
+            commit("addMessage", message);
+          });
       }
     },
-    addMessage({ commit }, messages) {
-      commit("addMessage", messages);
+    addMessage({ commit }, message) {
+      commit("addMessage", message);
     },
     updateMessage({ commit }, payload) {
       commit("updateMessage", payload);

@@ -94,7 +94,7 @@
     <div class="content-wrapper">
       <v-card-text v-if="content">
         <div
-          class="content black--text body-1 d-flex align-center flex-column"
+          class="content black--text body-1 d-flex align-center flex-column mce-content-body"
           v-html="content"
         />
       </v-card-text>

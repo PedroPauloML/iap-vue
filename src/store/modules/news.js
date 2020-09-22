@@ -5,11 +5,10 @@ export default {
   },
   mutations: {
     addNews(state, news) {
-      news = [news].flat().map((el, index) => {
-        el.id = state.news.length + index + 1;
-        return el;
-      });
-      state.news = [...news, ...state.news];
+      if (!news.id) {
+        news.id = state.news.length + 1;
+      }
+      state.news = [news, ...state.news];
     },
     updateNews(state, payload) {
       let index = state.news.findIndex((el) => el.id == payload.id);
@@ -30,7 +29,11 @@ export default {
 
           return obj;
         });
-        commit("addNews", news);
+        news
+          .sort((a, b) => a.id - b.id)
+          .forEach((n) => {
+            commit("addNews", n);
+          });
       }
     },
     addNews({ commit }, news) {

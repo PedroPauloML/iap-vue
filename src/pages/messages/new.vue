@@ -12,22 +12,12 @@ import Form from "../../components/messages/Form";
 
 export default {
   components: { Form },
-  data() {
-    return {
-      messages: null,
-    };
-  },
   created() {
     this.$emit("setBackRoute", {
       name: "messages",
     });
   },
   methods: {
-    findMessage() {
-      this.messages = this.$store.state.messages.messages.find(
-        (el) => el.id == this.$route.params.id
-      );
-    },
     createMessage(message) {
       this.$store.dispatch("messages/addMessage", message);
       this.goToMessages();

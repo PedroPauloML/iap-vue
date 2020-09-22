@@ -1,6 +1,6 @@
 <template>
   <v-card class="news-poster rounded-lg">
-    <v-img :src="image.url" :aspect-ratio="image.ratio">
+    <v-img :src="image.url || ''" :aspect-ratio="image.ratio">
       <div class="fill-height d-flex align-end">
         <v-col class="background pa-4 white--text">
           <div class="d-flex align-center">

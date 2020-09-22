@@ -16,66 +16,103 @@
       </v-col>
 
       <v-col cols="12" md="5" sm="7" class="d-flex align-center">
-        <v-menu
-          v-model="menu"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-        >
+        <div class="d-flex flex flex-column flex-sm-row">
+          <v-menu
+            v-model="menu"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="dateFormatted"
+                placeholder="Pesquisar por data..."
+                append-icon="mdi-calendar"
+                background-color="white"
+                class="mr-3"
+                readonly
+                outlined
+                clearable
+                dense
+                hide-details
+                v-bind="attrs"
+                v-on="on"
+                @click:clear="value.date = null"
+                :disabled="searching"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="value.date"
+              locale="pt-br"
+              no-title
+              scrollable
+              @change="
+                (date) => {
+                  filters.date = date;
+                  filterSchedules();
+                }
+              "
+            >
+            </v-date-picker>
+          </v-menu>
+
+          <v-text-field
+            name="search"
+            v-model="filters.search"
+            placeholder="Pesquisar por..."
+            append-icon="mdi-magnify"
+            background-color="white"
+            max-width="100"
+            outlined
+            clearable
+            dense
+            :hide-details="true"
+            @keyup.enter="filterSchedules"
+            @click:append="filterSchedules"
+            :disabled="searching"
+          ></v-text-field>
+        </div>
+
+        <v-tooltip v-if="userSigned" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="dateFormatted"
-              placeholder="Pesquisar por data..."
-              append-icon="mdi-calendar"
-              background-color="white"
-              class="mr-3"
-              readonly
-              outlined
-              clearable
-              dense
-              hide-details
+            <v-btn
+              color="primary"
+              fab
+              small
+              @click="
+                $router.push({
+                  name:
+                    $router.currentRoute.name == 'schedules_new'
+                      ? 'schedules'
+                      : 'schedules_new',
+                })
+              "
+              class="ml-5"
               v-bind="attrs"
               v-on="on"
-              @click:clear="value.date = null"
-              :disabled="searching"
-            ></v-text-field>
+            >
+              <v-icon
+                :class="{
+                  rotateZ: $router.currentRoute.name == 'schedules_new',
+                }"
+              >
+                mdi-plus
+              </v-icon>
+            </v-btn>
           </template>
-          <v-date-picker
-            v-model="value.date"
-            locale="pt-br"
-            no-title
-            scrollable
-            @change="
-              (date) => {
-                filters.date = date;
-                filterSchedules();
-              }
-            "
-          >
-          </v-date-picker>
-        </v-menu>
-
-        <v-text-field
-          name="search"
-          v-model="filters.search"
-          placeholder="Pesquisar por..."
-          append-icon="mdi-magnify"
-          background-color="white"
-          max-width="100"
-          outlined
-          clearable
-          dense
-          :hide-details="true"
-          @keyup.enter="filterSchedules"
-          @click:append="filterSchedules"
-          :disabled="searching"
-        ></v-text-field>
+          <span v-if="$router.currentRoute.name == 'schedules_new'">
+            Cancelar agenda
+          </span>
+          <span v-else>Criar agenda</span>
+        </v-tooltip>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import userMixins from "../../mixins/user";
+
 export default {
   props: {
     back_route: Object,
@@ -85,6 +122,7 @@ export default {
     },
     searching: Boolean,
   },
+  mixins: [userMixins],
   data() {
     return {
       menu: false,
@@ -131,4 +169,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.rotateZ {
+  transition: all 1s;
+  transform: rotateZ(45deg);
+}
+</style>
