@@ -44,61 +44,111 @@
 
     <div
       id="representatives"
-      class="d-flex flex-column flex-sm-row justify-space-around"
+      class="d-flex flex-wrap flex-column flex-sm-row justify-space-around"
     >
-      <div class="d-flex flex flex-sm-column align-start align-sm-center mb-5">
-        <v-img
-          src="https://picsum.photos/id/1012/150/150"
-          aspect-ratio="1"
-          :width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          class="rounded-circle mb-4 mr-3 mr-sm-0"
-        ></v-img>
-        <div class="flex text-center">
-          <span class="d-block display-1 font-weight-thin">Nome do pastor</span>
-          <span class="d-block font-weight-bold">Pastor</span>
-          <span class="d-block overline">(xx) x xxxx-xxxx</span>
-        </div>
-      </div>
-
-      <div class="d-flex flex flex-sm-column align-start align-sm-center mb-5">
-        <v-img
-          src="https://picsum.photos/id/1012/150/150"
-          aspect-ratio="1"
-          :width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          class="rounded-circle mb-4 mr-3 mr-sm-0"
-        ></v-img>
-        <div class="flex text-center">
-          <span class="d-block display-1 font-weight-thin"
-            >Nome do presbitero</span
+      <div
+        v-for="(integrant, index) in integrants"
+        :key="index"
+        class="d-flex flex flex-sm-column align-start align-sm-center mb-5"
+      >
+        <div style="position: relative;" class="mb-4 mr-3 mr-sm-0">
+          <v-img
+            :src="integrant.photo"
+            aspect-ratio="1"
+            :width="$vuetify.breakpoint.smAndUp ? 150 : 80"
+            :max-width="$vuetify.breakpoint.smAndUp ? 150 : 80"
+            :height="$vuetify.breakpoint.smAndUp ? 150 : 80"
+            :max-height="$vuetify.breakpoint.smAndUp ? 150 : 80"
+            class="rounded-circle"
           >
-          <span class="d-block font-weight-bold">Presbitero</span>
-          <span class="d-block overline">(xx) x xxxx-xxxx</span>
-        </div>
-      </div>
+            <template v-slot:placeholder>
+              <v-row
+                class="fill-height ma-0 secondary darken-1"
+                align="center"
+                justify="center"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img>
+          <v-tooltip
+            v-if="userSigned"
+            top
+            :disabled="$vuetify.breakpoint.mobile"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="red"
+                class="white--text delete-integrant"
+                fab
+                :x-small="$vuetify.breakpoint.xsOnly"
+                :small="$vuetify.breakpoint.smAndUp"
+                @click="deleteIntegrant(index)"
+                :loading="index == integrantIndexForDelete"
+                :disabled="integrantIndexForDelete != null"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon small>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Excluir</span>
+          </v-tooltip>
 
-      <div class="d-flex flex flex-sm-column align-start align-sm-center mb-5">
-        <v-img
-          src="https://picsum.photos/id/1012/150/150"
-          aspect-ratio="1"
-          :width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-width="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          :max-height="$vuetify.breakpoint.smAndUp ? 150 : 80"
-          class="rounded-circle mb-4 mr-3 mr-sm-0"
-        ></v-img>
+          <v-tooltip
+            v-if="userSigned"
+            top
+            :disabled="$vuetify.breakpoint.mobile"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="accent"
+                class="white--text edit-integrant"
+                fab
+                :x-small="$vuetify.breakpoint.xsOnly"
+                :small="$vuetify.breakpoint.smAndUp"
+                :disabled="integrantIndexForDelete != null"
+                @click="openIntegrantUpdateDialog(index)"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon small>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+            <span>Editar</span>
+          </v-tooltip>
+        </div>
         <div class="flex text-center">
           <span class="d-block display-1 font-weight-thin">
-            Nome do secretário(a)
+            {{ integrant.name }}
           </span>
-          <span class="d-block font-weight-bold">Secretário(a)</span>
-          <span class="d-block overline">(xx) x xxxx-xxxx</span>
+          <span class="d-block font-weight-bold">{{ integrant.role }}</span>
+          <span class="d-block overline">{{ integrant.contact }}</span>
         </div>
+      </div>
+
+      <div
+        v-if="userSigned"
+        class="d-flex flex flex-sm-column align-center justify-center mb-5"
+      >
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              fab
+              :disabled="integrantIndexForDelete != null"
+              @click="newIntegrant"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon large>mdi-plus</v-icon>
+            </v-btn>
+          </template>
+          <span>Adicionar novo integrante</span>
+        </v-tooltip>
       </div>
     </div>
 
@@ -106,17 +156,101 @@
       Faça-nos uma visita! Estramos de braços abertos para recebê-lo e a
       disposição para orar por você e compartilhar o que Deus tem a nos falar.
     </p>
+
+    <Integrant
+      :data="selectedIntegrant"
+      :opened="integrantDialogOpened"
+      @closeDialog="closeIntegrantUpdateDialog"
+      @createIntegrant="createIntegrant"
+      @updateIntegrant="updateIntegrant"
+    />
   </div>
 </template>
 
 <script>
-export default {};
+import userMixins from "../../mixins/user";
+import Integrant from "../../components/contact/Integrant";
+
+export default {
+  components: { Integrant },
+  mixins: [userMixins],
+  data() {
+    return {
+      integrantDialogOpened: false,
+      integrants: [],
+      selectedIntegrant: {},
+      integrantIndexForDelete: null,
+    };
+  },
+  created() {
+    this.$store.dispatch("integrants/loadIntegrants").then(this.loadIntegrants);
+  },
+  methods: {
+    loadIntegrants() {
+      this.integrants = this.$store.state.integrants.integrants;
+    },
+    openIntegrantUpdateDialog(index) {
+      this.selectedIntegrant = this.integrants[index];
+      this.integrantDialogOpened = true;
+    },
+    closeIntegrantUpdateDialog() {
+      this.integrantDialogOpened = false;
+      this.selectedIntegrant = {};
+    },
+    newIntegrant() {
+      this.selectedIntegrant = {};
+      this.integrantDialogOpened = true;
+    },
+    createIntegrant(payload) {
+      this.$store.dispatch("integrants/addIntegrant", payload).then(() => {
+        this.closeIntegrantUpdateDialog();
+        this.loadIntegrants();
+      });
+    },
+    updateIntegrant(payload) {
+      this.$store.dispatch("integrants/updateIntegrant", payload).then(() => {
+        this.closeIntegrantUpdateDialog();
+        this.loadIntegrants();
+      });
+    },
+    deleteIntegrant(index) {
+      let id = this.integrants[index].id;
+
+      if (confirm("Tem certeza que deseja excluir esse integrante?")) {
+        this.integrantIndexForDelete = index;
+
+        setTimeout(() => {
+          this.$store.dispatch("integrants/removeIntegrant", id).then(() => {
+            this.loadIntegrants();
+            this.integrantIndexForDelete = null;
+          });
+        }, 1000);
+      }
+    },
+  },
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 iframe {
   width: 100%;
   height: 500px;
   max-height: 70vh;
+}
+.edit-integrant {
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+}
+.delete-integrant {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+}
+@media (min-width: 601px) {
+  #representatives > div {
+    max-width: 300px;
+    width: 300px;
+  }
 }
 </style>

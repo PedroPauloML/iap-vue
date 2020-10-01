@@ -28,7 +28,12 @@
         no-actions
       />
       <v-form v-show="!preview" ref="form" v-model="valid" lazy-validation>
-        <Cropper ref="image" v-model="image" :currentImage="currentImage" />
+        <Cropper
+          ref="image"
+          v-model="image"
+          :currentImage="currentImage"
+          imageName="Imagem de capa"
+        />
         <p v-if="imagePrintError" class="red--text">
           A imagem da notícia é obrigatório(a)
         </p>

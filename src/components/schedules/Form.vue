@@ -25,9 +25,14 @@
         />
       </div>
       <v-form v-show="!preview" ref="form" v-model="valid" lazy-validation>
-        <Cropper ref="image" v-model="image" :currentImage="currentImage" />
+        <Cropper
+          ref="image"
+          v-model="image"
+          :currentImage="currentImage"
+          imageName="Imagem da agenda"
+        />
         <p v-if="imagePrintError" class="red--text">
-          A imagem da notícia é obrigatório(a)
+          A imagem da agenda é obrigatório(a)
         </p>
 
         <v-text-field

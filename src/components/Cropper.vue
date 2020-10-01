@@ -13,14 +13,19 @@
         <div class="img-cropper">
           <vue-cropper
             ref="cropper"
-            :aspect-ratio="16 / 9"
+            :aspect-ratio="aspectRatio"
             :src="imgSrc"
             :zoomable="false"
             :responsive="true"
             :containerStyle="{ maxHeight: '60vh' }"
           />
         </div>
-        <div class="actions">
+        <div
+          :class="{
+            actions: 'true',
+            'flex-column': $vuetify.breakpoint.smAndDown || linearActionsButton,
+          }"
+        >
           <div>
             <span class="font-weight-bold">Editar:</span>
             <v-tooltip top>
@@ -123,14 +128,27 @@
         ></v-progress-circular>
         Carregando editor da imagem
       </span>
-      <span v-else>Selecionar imagem de capa</span>
+      <span v-else>Selecionar {{ imageName }}</span>
     </a>
     <div v-show="cropImg" class="cropped-img-container">
       <div class="cropped-img-content">
-        <img :src="cropImg" alt="Cropped Image" />
+        <v-img :src="cropImg" alt="Cropped Image">
+          <template v-slot:placeholder>
+            <v-row
+              class="fill-height ma-0 secondary darken-1"
+              align="center"
+              justify="center"
+            >
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </v-row>
+          </template>
+        </v-img>
 
         <a href="#" role="button" @click.prevent="showFileChooser">
-          <span>Alterar imagem de capa</span>
+          <span>Alterar {{ imageName }}</span>
         </a>
       </div>
     </div>
@@ -142,7 +160,13 @@ import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 
 export default {
-  props: { value: { type: String, required: true }, currentImage: String },
+  props: {
+    value: { type: String, required: true },
+    currentImage: String,
+    imageName: { type: String, default: "Imagem" },
+    aspectRatio: { type: Number, default: 16 / 9 },
+    linearActionsButton: { type: Boolean, default: false },
+  },
   components: {
     VueCropper,
   },
@@ -153,6 +177,14 @@ export default {
       cropping: false,
       cropImg: this.currentImage,
     };
+  },
+  watch: {
+    value(val) {
+      this.imgSrc = val;
+    },
+    currentImage(val) {
+      this.cropImg = val;
+    },
   },
   methods: {
     cropImage() {
@@ -281,8 +313,9 @@ input[type="file"] {
   border: 3px solid #004b83;
   background: #004b83;
   border-radius: 5px;
+  max-width: 100%;
 }
-.cropped-img-content img {
+.cropped-img-content .v-image {
   max-height: 40vh;
   border-radius: 5px;
   max-width: 100%;
