@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import general from "./modules/general";
 import messages from "./modules/messages";
 import user from "./modules/user";
 import news from "./modules/news";
@@ -13,6 +14,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   actions,
   modules: {
+    general,
     user,
     news,
     messages,

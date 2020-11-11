@@ -52,7 +52,9 @@
         </v-btn>
       </router-link>
     </div>
+
     <v-carousel
+      v-if="schedules_list.length > 0"
       v-model="schedule_page"
       class="mb-5"
       height="auto"
@@ -88,6 +90,16 @@
         </v-row>
       </v-carousel-item>
     </v-carousel>
+    <div v-else>
+      <v-card class="mb-5">
+        <v-card-text>
+          <p class="mb-0 black--text">
+            Não temos nenhuma programação para os próximos dias. Mas fique
+            atento, em breve estaremos divulgando as nossas novas atividades.
+          </p>
+        </v-card-text>
+      </v-card>
+    </div>
 
     <div class="d-flex justify-space-between align-center mb-2">
       <span class="title">Versículos do Dia</span>

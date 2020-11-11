@@ -6,5 +6,13 @@
     "profile": {
       "name": "Administrador"
     }
+  },
+  {
+    "token": "user-2",
+    "email": "user@email.com",
+    "password": "123456",
+    "profile": {
+      "name": "Usuário comum"
+    }
   }
 ]

@@ -1,11 +1,17 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-// import store from "./store/store";
+import store from "./store/store";
 
 // Lazy load of components
 // This components will be loaded just when used, improving your site performance
 // const Login = () => import("./pages/Login");
+const ConfirmationEmail = () =>
+  import("./pages/authentication/confirmation_email");
+const ConfirmAccount = () => import("./pages/authentication/confirm_account");
+const PasswordRecoverRequest = () =>
+  import("./pages/authentication/password_recover_request");
+const RecoverPassword = () => import("./pages/authentication/recover_password");
 const HomeIndex = () => import("./pages/home/index");
 const NewsLayout = () => import("./pages/news/layout");
 const NewsIndex = () => import("./pages/news/index");
@@ -36,6 +42,30 @@ const router = new Router({
   routes: [
     // AUTHENTICATION
     // { name: "login", path: "/login", component: Login },
+    {
+      name: "confirmation_email",
+      path: "/confirmation_email",
+      component: ConfirmationEmail,
+      meta: { title: `E-mail de confirmação de conta enviado | ${site_name}` },
+    },
+    {
+      name: "confirm_account",
+      path: "/confirm_account",
+      component: ConfirmAccount,
+      meta: { title: `Confirmação de e-mail | ${site_name}` },
+    },
+    {
+      name: "password_recover_request",
+      path: "/password_recover_request",
+      component: PasswordRecoverRequest,
+      meta: { title: `Solicitar recuperação de senha | ${site_name}` },
+    },
+    {
+      name: "recover_password",
+      path: "/recover_password",
+      component: RecoverPassword,
+      meta: { title: `Recuperar senha | ${site_name}` },
+    },
 
     // HOME
     {
@@ -181,6 +211,23 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || site_name;
+
+  let routes_to_use_authentication_layout = [
+    "confirmation_email",
+    "confirm_account",
+    "password_recover_request",
+    "recover_password",
+  ];
+
+  if (routes_to_use_authentication_layout.includes(to.name)) {
+    if (store.state.general.layout != "Authentication") {
+      store.dispatch("general/changeLayout", "Authentication");
+    }
+  } else {
+    if (store.state.general.layout != "Site") {
+      store.dispatch("general/changeLayout", "Site");
+    }
+  }
 
   // if (to.name == "login" || store.state.user) {
   //   next();

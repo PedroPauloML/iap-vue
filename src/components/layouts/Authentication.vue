@@ -2,13 +2,11 @@
   <div class="d-flex">
     <v-menu v-model="signUpMenu" :close-on-content-click="false" offset-y>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          text
-          :small="$vuetify.breakpoint.smAndDown"
-          v-bind="attrs"
-          v-on="on"
-        >
-          Cadastrar-se
+        <v-btn text :icon="$vuetify.breakpoint.mobile" v-bind="attrs" v-on="on">
+          <span v-if="$vuetify.breakpoint.mobile">
+            <v-icon dark>mdi-account-plus</v-icon>
+          </span>
+          <span v-else>Cadastrar-se</span>
         </v-btn>
       </template>
 
@@ -61,12 +59,28 @@
             @keyup.enter="signUpByEmail"
             autocomplete="new-password"
           ></v-text-field>
+
+          <v-text-field
+            v-model="passwordConfirmation"
+            :append-icon="showPasswordConfirmation ? 'mdi-eye' : 'mdi-eye-off'"
+            :rules="passwordConfirmationRules"
+            :type="showPasswordConfirmation ? 'text' : 'password'"
+            label="Confirmação de senha"
+            @click:append="showPasswordConfirmation = !showPasswordConfirmation"
+            @keyup.enter="signUpByEmail"
+            autocomplete="new-password-confirmation"
+          ></v-text-field>
         </v-form>
 
         <div class="d-flex px-5 pb-5">
           <v-spacer></v-spacer>
 
-          <v-btn text @click="closeSignUpMenu" class="mr-2">
+          <v-btn
+            text
+            @click="closeSignUpMenu"
+            class="mr-2"
+            :disabled="signingUpByEmail"
+          >
             Cancelar
           </v-btn>
 
@@ -80,7 +94,7 @@
           </v-btn>
         </div>
 
-        <v-divider class="mx-5" />
+        <!-- <v-divider class="mx-5" />
 
         <div class="d-flex flex-column align-center px-5 py-3">
           <p class="body-2">Cadastrar-se com a conta social</p>
@@ -93,7 +107,7 @@
           >
             Google
           </v-btn>
-        </div>
+        </div> -->
       </v-card>
     </v-menu>
 
@@ -102,11 +116,14 @@
         <v-btn
           text
           color="primary"
-          :small="$vuetify.breakpoint.smAndDown"
+          :icon="$vuetify.breakpoint.mobile"
           v-bind="attrs"
           v-on="on"
         >
-          Entrar
+          <span v-if="$vuetify.breakpoint.mobile">
+            <v-icon>mdi-login</v-icon>
+          </span>
+          <span v-else>Entrar</span>
         </v-btn>
       </template>
 
@@ -152,10 +169,24 @@
           ></v-text-field>
         </v-form>
 
+        <router-link
+          :to="{ name: 'password_recover_request' }"
+          v-slot="{ href }"
+        >
+          <v-btn :to="href" color="primary" link text small class="mx-5 mb-3">
+            Esqueceu a sua senha?
+          </v-btn>
+        </router-link>
+
         <div class="d-flex px-5 pb-5">
           <v-spacer></v-spacer>
 
-          <v-btn text @click="closeSignInMenu" class="mr-2">
+          <v-btn
+            text
+            @click="closeSignInMenu"
+            class="mr-2"
+            :disabled="signingInByEmail"
+          >
             Cancelar
           </v-btn>
 
@@ -169,7 +200,7 @@
           </v-btn>
         </div>
 
-        <v-divider class="mx-5" />
+        <!-- <v-divider class="mx-5" />
 
         <div class="d-flex flex-column align-center px-5 py-3">
           <p class="body-2">Acessar com a conta social</p>
@@ -182,7 +213,7 @@
           >
             Google
           </v-btn>
-        </div>
+        </div> -->
       </v-card>
     </v-menu>
   </div>
@@ -205,11 +236,7 @@ export default {
       signInError: false,
 
       name: "",
-      nameRules: [
-        (v) => !!v || "Nome é obrigatório",
-        (v) =>
-          (v && v.length > 10) || "Nome precisa ter no mínimo 10 caracteres",
-      ],
+      nameRules: [(v) => !!v || "Nome é obrigatório"],
       email: "",
       emailRules: [
         (v) => !!v || "E-mail é obrigatório",
@@ -217,7 +244,16 @@ export default {
       ],
       password: "",
       showPassword: false,
-      passwordRules: [(v) => !!v || "Senha é obrigatório"],
+      passwordRules: [
+        (v) => !!v || "Senha é obrigatório",
+        (v) => v.length >= 8 || "Deve ter conter, no mínimo, 8 caracteres",
+      ],
+      passwordConfirmation: "",
+      showPasswordConfirmation: false,
+      passwordConfirmationRules: [
+        (v) => !!v || "Confirmação de senha é obrigatório",
+        (v) => v == this.password || "Senhas não coincidem",
+      ],
     };
   },
   methods: {
@@ -243,65 +279,79 @@ export default {
 
         this.signingInByEmail = true;
 
-        let user = users.find(
-          (u) => u.email == this.email && u.password == this.password
-        );
+        setTimeout(() => {
+          let user = users.find(
+            (u) => u.email == this.email && u.password == this.password
+          );
 
-        if (user) {
-          let jwt = user.token;
-          this.closeSignInMenu();
-          this.$cookies.set("jwt", jwt);
-          this.$store.dispatch("user/setUser", user);
-          // location.reload();
-        } else {
-          this.signInError = true;
-        }
+          if (user) {
+            let jwt = user.token;
+            this.closeSignInMenu();
+            this.$cookies.set("jwt", jwt);
+            this.$store.dispatch("user/setUser", user);
+            // location.reload();
+          } else {
+            this.signInError = true;
+          }
 
-        this.signingInByEmail = false;
+          this.signingInByEmail = false;
+        }, 1000);
       }
     },
-    signInByOAuth() {
-      this.signInError = false;
-      this.signingInByOAuth = true;
+    // signInByOAuth() {
+    //   this.signInError = false;
+    //   this.signingInByOAuth = true;
 
-      setTimeout(() => {
-        this.signingInByOAuth = false;
-      }, 1000);
-    },
+    //   setTimeout(() => {
+    //     this.signingInByOAuth = false;
+    //   }, 1000);
+    // },
     signUpByEmail() {
       if (this.$refs.signUpForm.validate()) {
         this.signingUpByEmail = true;
 
-        let user = {
-          token: "user-2",
-          email: this.email,
-          password: this.password,
-          profile: {
-            name: this.name,
-          },
-        };
+        setTimeout(() => {
+          // let user = {
+          //   token: "user-2",
+          //   email: this.email,
+          //   password: this.password,
+          //   profile: {
+          //     name: this.name,
+          //   },
+          // };
 
-        if (user) {
-          let jwt = user.token;
-          this.closeSignUpMenu();
-          this.$cookies.set("jwt", jwt);
-          this.$store.dispatch("user/setUser", user);
-          // location.reload();
-        } else {
-          this.signUpError = true;
-        }
+          // if (user) {
+          //   let jwt = user.token;
+          //   this.$cookies.set("jwt", jwt);
+          //   this.$store.dispatch("user/setUser", user);
+          //   this.closeSignUpMenu();
+          //   // location.reload();
+          // } else {
+          //   this.signUpError = true;
+          // }
+          // this.signingUpByEmail = false;
 
-        this.signingUpByEmail = false;
+          this.$router.push({
+            name: "confirmation_email",
+            params: {
+              email: this.email,
+              password: this.password,
+              profile: {
+                name: this.name,
+              },
+            },
+          });
+        }, 1000);
       }
     },
-    signUpByOAuth() {
-      this.signInError = false;
-      this.signingUpByOAuth = true;
+    // signUpByOAuth() {
+    //   this.signInError = false;
+    //   this.signingUpByOAuth = true;
 
-      setTimeout(() => {
-        this.signingUpByOAuth = false;
-      }, 1000);
-    },
+    //   setTimeout(() => {
+    //     this.signingUpByOAuth = false;
+    //   }, 1000);
+    // },
   },
 };
 </script>
